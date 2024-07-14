@@ -31,5 +31,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="UI Phone")
 	void OnPhoneClose();
-	
+
+	UPROPERTY(BlueprintReadOnly, Category="UI Phone")
+	bool bInPhone = false;
 };

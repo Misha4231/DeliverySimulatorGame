@@ -3,6 +3,8 @@
 
 #include "CorePlayerController.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
+
 void ACorePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -31,9 +33,12 @@ void ACorePlayerController::SetupInputComponent()
 
 void ACorePlayerController::OnPhoneOpen()
 {
+	bInPhone = true;
+	
 	if (HUDWidget)
 	{
 		HUDWidget->GetInPhone();
+
 	} else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "HUD Widget not found");
@@ -42,11 +47,15 @@ void ACorePlayerController::OnPhoneOpen()
 
 void ACorePlayerController::OnPhoneClose()
 {
+	if (!bInPhone) return;
 	if (HUDWidget)
 	{
 		HUDWidget->HidePhone();
+		UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 	} else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "HUD Widget not found");
 	}
+
+	bInPhone = false;
 }

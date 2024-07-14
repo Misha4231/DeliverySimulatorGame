@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Overlay.h"
+#include "Components/SizeBox.h"
 #include "Phone/PhoneCore.h"
 #include "Kismet/GameplayStatics.h"
 #include "CoreHUD.generated.h"
@@ -19,7 +20,7 @@ class DELIVERYSIMULATOR_API UCoreHUD : public UUserWidget
 
 public:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
-	UOverlay* OverlayPhonePosition;
+	USizeBox* OverlayPhonePosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Phone")
 	UPhoneCore* PhoneWidget;

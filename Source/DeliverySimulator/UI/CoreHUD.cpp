@@ -24,5 +24,6 @@ void UCoreHUD::GetInPhone()
 
 void UCoreHUD::HidePhone()
 {
-	PhoneWidget->OnHidePhoneAnimation();
+	if (PhoneWidget)
+		PhoneWidget->OnHidePhoneAnimation();
 }
