@@ -31,9 +31,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnHidePhone();
-
-	UFUNCTION(BlueprintCallable)
-	void SetPhoneWidget(UWidget* Screen);
 	
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* FadeIn;
@@ -44,6 +41,12 @@ public:
 	UPROPERTY()
 	UCoreHUD* HUD;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf<UUserWidget>> ScreenClassesArray;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UUserWidget*> ScreensArray;
+	
 	UFUNCTION(BlueprintCallable)
 	void ChangeScreen(const int ActiveWidgetIndex);
 };

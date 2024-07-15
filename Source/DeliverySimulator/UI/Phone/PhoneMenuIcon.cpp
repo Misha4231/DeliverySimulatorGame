@@ -23,7 +23,8 @@ void UPhoneMenuIcon::NativePreConstruct()
 
 void UPhoneMenuIcon::OnButtonClicked()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "Button clicked");
+	if (MenuScreenObject && OnChangeScreen)
+		(*MenuScreenObject.*OnChangeScreen)(WidgetSwitcherIndex);
 }
 
 void UPhoneMenuIcon::SetIconTexture(UTexture2D* IconTexture) const

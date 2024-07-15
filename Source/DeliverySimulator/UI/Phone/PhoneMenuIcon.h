@@ -9,6 +9,7 @@
 #include "Components/TextBlock.h"
 #include "PhoneMenuIcon.generated.h"
 
+class UMenuScreen;
 /**
  * 
  */
@@ -21,7 +22,6 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 	
-	
 	UPROPERTY(meta=(BindWidget))
 	UButton* IconButton;
 
@@ -30,7 +30,7 @@ public:
 
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* AppTitleText;
-
+	
 	UFUNCTION()
 	void OnButtonClicked();
 
@@ -48,4 +48,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int WidgetSwitcherIndex;
+
+	UPROPERTY()
+	UMenuScreen* MenuScreenObject;
+	void (UMenuScreen::*OnChangeScreen)(int);
 };

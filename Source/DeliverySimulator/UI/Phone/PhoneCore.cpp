@@ -3,16 +3,28 @@
 
 #include "PhoneCore.h"
 #include "DeliverySimulator/UI/CoreHUD.h"
+#include "Screens/ScreensRouting.h"
 
 void UPhoneCore::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	for (UWidget* Screen : ScreensSwitcher->GetAllChildren())
+
+	for (TSubclassOf<UUserWidget>& ScreenClass : ScreenClassesArray)
 	{
-		SetPhoneWidget(Screen);
+		UUserWidget* NewScreen = CreateWidget<UUserWidget>(this, ScreenClass);
+		if (NewScreen)
+		{
+			ScreensSwitcher->AddChild(NewScreen);
+			ScreensArray.Add(NewScreen);
+
+			if (IScreenRoutingInterface* RoutingInterface = Cast<IScreenRoutingInterface>(NewScreen))
+			{
+				RoutingInterface->SetScreenChangeDelegate(FScreenChangeDelegate::CreateUObject(this, &UPhoneCore::ChangeScreen));
+			}
+		}
 	}
 
+	
 	if (FadeIn) PlayAnimation(FadeIn);
 	else GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "FadeInAnimation not found");
 }
@@ -37,11 +49,13 @@ void UPhoneCore::OnHidePhone()
 	}
 }
 
-void UPhoneCore::SetPhoneWidget(UWidget* Screen)
-{
-}
 
 void UPhoneCore::ChangeScreen(const int ActiveWidgetIndex)
 {
-	ScreensSwitcher->SetActiveWidgetIndex(ActiveWidgetIndex);
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, FString::FormatAsNumber(ActiveWidgetIndex));
+	
+	if (ScreensSwitcher && ScreensArray.IsValidIndex(ActiveWidgetIndex))
+	{
+		ScreensSwitcher->SetActiveWidgetIndex(ActiveWidgetIndex);
+	}
 }
