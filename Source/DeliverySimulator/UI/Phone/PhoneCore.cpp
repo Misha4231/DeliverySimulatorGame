@@ -23,7 +23,10 @@ void UPhoneCore::NativeConstruct()
 			}
 		}
 	}
+	
+	UpdateBackground();
 
+	BackButton->OnClicked.AddDynamic(this, &UPhoneCore::GoHomeScreen);
 	
 	if (FadeIn) PlayAnimation(FadeIn);
 	else GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "FadeInAnimation not found");
@@ -52,10 +55,32 @@ void UPhoneCore::OnHidePhone()
 
 void UPhoneCore::ChangeScreen(const int ActiveWidgetIndex)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, FString::FormatAsNumber(ActiveWidgetIndex));
-	
 	if (ScreensSwitcher && ScreensArray.IsValidIndex(ActiveWidgetIndex))
 	{
 		ScreensSwitcher->SetActiveWidgetIndex(ActiveWidgetIndex);
 	}
+
+	UpdateBackground();
+}
+
+void UPhoneCore::UpdateBackground()
+{
+	const int CurrentIndex = ScreensSwitcher->GetActiveWidgetIndex();
+
+	if (CurrentIndex == 0)
+	{
+		HeaderBackground->SetVisibility(ESlateVisibility::Hidden);
+		ScreenSwitcherWrapper->SetBrushColor(FLinearColor::Transparent);
+		GoBackSectionWrapper->SetVisibility(ESlateVisibility::Hidden);
+	} else
+	{
+		HeaderBackground->SetVisibility(ESlateVisibility::Visible);
+		ScreenSwitcherWrapper->SetBrushColor(FLinearColor::White);
+		GoBackSectionWrapper->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UPhoneCore::GoHomeScreen()
+{
+	ChangeScreen(0);
 }

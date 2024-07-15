@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Border.h"
+#include "Components/Button.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetSwitcher.h"
 #include "PhoneCore.generated.h"
@@ -26,6 +29,18 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UWidgetSwitcher* ScreensSwitcher;
 
+	UPROPERTY(meta=(BindWidget))
+	UImage* HeaderBackground;
+
+	UPROPERTY(meta=(BindWidget))
+	UBorder* ScreenSwitcherWrapper;
+
+	UPROPERTY(meta=(BindWidget))
+	UBorder* GoBackSectionWrapper;
+
+	UPROPERTY(meta=(BindWidget))
+	UButton* BackButton;
+	
 	UFUNCTION(BlueprintCallable)
 	void OnHidePhoneAnimation();
 
@@ -49,4 +64,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ChangeScreen(const int ActiveWidgetIndex);
+
+	void UpdateBackground();
+	
+	UFUNCTION()
+	void GoHomeScreen();
 };
