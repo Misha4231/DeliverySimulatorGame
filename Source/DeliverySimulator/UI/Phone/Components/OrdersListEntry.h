@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Blueprint/IUserObjectListEntry.h"
 #include "Blueprint/UserWidget.h"
 #include "OrdersListEntry.generated.h"
 
@@ -10,7 +11,7 @@
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API UOrdersListEntry : public UUserWidget
+class DELIVERYSIMULATOR_API UOrdersListEntry : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 	
