@@ -24,6 +24,7 @@ struct FRestaurant : public FTableRowBase
 	TArray<int> AvailableFoodIds;
 };
 
+
 USTRUCT(BlueprintType)
 struct FDestination : public FTableRowBase
 {

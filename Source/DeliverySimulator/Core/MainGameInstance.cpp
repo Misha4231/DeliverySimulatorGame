@@ -31,9 +31,14 @@ const TArray<FProduct>& UMainGameInstance::GetProducts() const
 	return Products;
 }
 
-TArray<FOrder> UMainGameInstance::GetCurrentOrders() const
+const TArray<FOrder>& UMainGameInstance::GetCurrentOrders() const
 {
 	return Orders;
+}
+
+const int UMainGameInstance::GetCurrentOrdersLength() const
+{
+	return Orders.Num();
 }
 
 void UMainGameInstance::LoadOrdersSlotData()

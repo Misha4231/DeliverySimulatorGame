@@ -25,7 +25,10 @@ public:
 	const TArray<FProduct>& GetProducts() const;
 
 	UFUNCTION(BlueprintCallable, Category = "OrderData")
-	TArray<FOrder> GetCurrentOrders() const;
+	const TArray<FOrder>& GetCurrentOrders() const;
+
+	UFUNCTION(BlueprintCallable, Category = "OrderData")
+	const int GetCurrentOrdersLength() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OrderData")
 	UDataTable* ProductsDataTable;

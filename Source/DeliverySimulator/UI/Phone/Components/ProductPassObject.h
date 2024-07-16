@@ -3,21 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
 #include <DeliverySimulator/Core/SG_OrdersSlot.h>
-
-#include "RestaurantPassObject.generated.h"
+#include "ProductPassObject.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API URestaurantPassObject : public UObject
+class DELIVERYSIMULATOR_API UProductPassObject : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	URestaurantPassObject();
+	UProductPassObject();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FOrder Order;
+	FOrderProduct Product;
 };

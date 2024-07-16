@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "ScreensRouting.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ListView.h"
+#include "DeliverySimulator/Core/MainGameInstance.h"
 #include "OrdersScreen.generated.h"
 
 /**
@@ -19,4 +21,14 @@ public:
 	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate);
 protected:
 	FScreenChangeDelegate ScreenChangeDelegate;
+
+public:
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
+	UPROPERTY(meta=(BindWidget))
+	UListView* OrdersList;
+
+	UPROPERTY()
+	UMainGameInstance* MainGameInstance;
 };
