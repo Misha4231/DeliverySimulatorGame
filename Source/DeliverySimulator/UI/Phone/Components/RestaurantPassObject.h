@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include <DeliverySimulator/Core/SG_OrdersSlot.h>
-
+#include <DeliverySimulator/UI/Phone/Screens/OrdersScreen.h>
 #include "RestaurantPassObject.generated.h"
 
 /**
@@ -20,4 +20,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FOrder Order;
+
+	UPROPERTY()
+	UOrdersScreen* OrdersScreenObject;
+	void (UOrdersScreen::*OnOrderTaken)(int);
+	void (UOrdersScreen::*OnGoToDetails)(URestaurantPassObject*);
 };

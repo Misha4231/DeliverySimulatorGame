@@ -3,7 +3,7 @@
 
 #include "MenuScreen.h"
 
-void UMenuScreen::SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate)
+void UMenuScreen::SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate)
 {
 	ScreenChangeDelegate = InScreenChangeDelegate;
 }
@@ -32,10 +32,10 @@ void UMenuScreen::CacheButtons()
 	}
 }
 
-void UMenuScreen::ChangeScreen(int Index)
+void UMenuScreen::ChangeScreen(TSubclassOf<UUserWidget> NewScreen)
 {
 	if (ScreenChangeDelegate.IsBound())
 	{
-		ScreenChangeDelegate.Execute(Index);
+		ScreenChangeDelegate.Execute(NewScreen);
 	}
 }

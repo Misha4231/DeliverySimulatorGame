@@ -24,7 +24,7 @@ void UPhoneMenuIcon::NativePreConstruct()
 void UPhoneMenuIcon::OnButtonClicked()
 {
 	if (MenuScreenObject && OnChangeScreen)
-		(*MenuScreenObject.*OnChangeScreen)(WidgetSwitcherIndex);
+		(*MenuScreenObject.*OnChangeScreen)(IconScreen);
 }
 
 void UPhoneMenuIcon::SetIconTexture(UTexture2D* IconTexture) const

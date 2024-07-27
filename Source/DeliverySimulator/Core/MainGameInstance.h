@@ -33,6 +33,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OrderData")
 	UDataTable* ProductsDataTable;
 
+
+	UFUNCTION(BlueprintCallable)
+	FOrder SetCurrentOrder(int Id);
+
+	UFUNCTION(BlueprintCallable)
+	void CurrentOrderDone();
+
+	UFUNCTION(BlueprintCallable)
+	void CancelCurrentOrder();
+
 	UFUNCTION(BlueprintCallable)
 	void LoadOrdersSlotData();
 

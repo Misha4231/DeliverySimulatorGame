@@ -46,10 +46,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTitle(const FText& NewTitle) const;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//int WidgetSwitcherIndex;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int WidgetSwitcherIndex;
+	TSubclassOf<UUserWidget> IconScreen;
 
 	UPROPERTY()
 	UMenuScreen* MenuScreenObject;
-	void (UMenuScreen::*OnChangeScreen)(int);
+	void (UMenuScreen::*OnChangeScreen)(TSubclassOf<UUserWidget>);
 };

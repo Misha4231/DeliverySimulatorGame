@@ -18,10 +18,10 @@ class DELIVERYSIMULATOR_API UMenuScreen : public UUserWidget, public IScreenRout
 	GENERATED_BODY()
 
 public:
-	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate);
+	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate);
 protected:
 	FScreenChangeDelegate ScreenChangeDelegate;
-	
+
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
@@ -35,5 +35,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CacheButtons();
 
-	void ChangeScreen(int Index);
+	void ChangeScreen(TSubclassOf<UUserWidget> NewScreen);
 };

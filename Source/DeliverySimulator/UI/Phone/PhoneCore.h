@@ -27,7 +27,7 @@ public:
 	UTextBlock* CurrentTimeTextBlock;
 
 	UPROPERTY(meta=(BindWidget))
-	UWidgetSwitcher* ScreensSwitcher;
+	UBorder* ScreensWrapper;
 
 	UPROPERTY(meta=(BindWidget))
 	UImage* HeaderBackground;
@@ -57,16 +57,23 @@ public:
 	UCoreHUD* HUD;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<TSubclassOf<UUserWidget>> ScreenClassesArray;
+	TSubclassOf<UUserWidget> MenuScreenClass;
 
 	UPROPERTY(BlueprintReadOnly)
-	TArray<UUserWidget*> ScreensArray;
+	TArray<UUserWidget*> ScreensStack;
 	
 	UFUNCTION(BlueprintCallable)
-	void ChangeScreen(const int ActiveWidgetIndex);
+	void ChangeScreen(TSubclassOf<UUserWidget> NewScreenClass);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeToCreatedScreen(UUserWidget* NewScreen);
 
 	void UpdateBackground();
+	void ShowCurrentTopScreen();
 	
 	UFUNCTION()
 	void GoHomeScreen();
+
+	UFUNCTION()
+	void GoBackScreen();
 };

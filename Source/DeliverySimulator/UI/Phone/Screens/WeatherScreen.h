@@ -16,7 +16,7 @@ class DELIVERYSIMULATOR_API UWeatherScreen : public UUserWidget, public IScreenR
 	GENERATED_BODY()
 
 public:
-	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate);
+	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate);
 protected:
 	FScreenChangeDelegate ScreenChangeDelegate;
 };

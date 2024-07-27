@@ -8,6 +8,10 @@ bool USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<
 	if (CurrentOrders.Num() >= 10) return false;
 
 	FOrder NewOrder = FOrder();
+	
+	if (CurrentOrders.Num() > 0) NewOrder.Id = CurrentOrders.Last().Id + 1;
+	else NewOrder.Id = 1;
+	
 	NewOrder.Restaurant = AvailableRestaurants[FMath::RandRange(0, AvailableRestaurants.Num() - 1)];
 	NewOrder.Destination = AvailableDestinations[FMath::RandRange(0, AvailableDestinations.Num() - 1)];
 	NewOrder.PercentFee = FMath::RandRange(10, 45);
@@ -32,4 +36,19 @@ bool USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<
 	CurrentOrders.Add(NewOrder);
 	
 	return true;
+}
+
+FOrder USG_OrdersSlot::SetCurrentOrderDelivering(int Id) {
+	for (auto Order : CurrentOrders) {
+		if (Order.Id == Id) {
+			CurrentOrderDelivering = Order;
+			break;
+		}
+	}
+
+	return CurrentOrderDelivering;
+}
+
+void USG_OrdersSlot::CancelCurrentOrderDelivering() {
+	CurrentOrderDelivering = FOrder();
 }

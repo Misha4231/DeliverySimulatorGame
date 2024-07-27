@@ -102,4 +102,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<FProduct>& AvailableProducts, TArray<FDestination>& AvailableDestinations);
+
+	UPROPERTY(BlueprintReadWrite)
+	FOrder CurrentOrderDelivering;
+
+	UFUNCTION(BlueprintCallable)
+	FOrder SetCurrentOrderDelivering(int Id);
+
+	UFUNCTION(BlueprintCallable)
+	void CancelCurrentOrderDelivering();
 };

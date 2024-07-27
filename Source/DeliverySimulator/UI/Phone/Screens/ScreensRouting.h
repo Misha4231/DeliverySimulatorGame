@@ -6,7 +6,8 @@
 #include "ScreensRouting.generated.h"
 
 
-DECLARE_DELEGATE_OneParam(FScreenChangeDelegate, int);
+DECLARE_DELEGATE_OneParam(FScreenChangeDelegate, TSubclassOf<UUserWidget>);
+DECLARE_DELEGATE_OneParam(FChangeToCreatedScreenDelegate, UUserWidget*);
 
 UINTERFACE(MinimalAPI)
 class UScreenRoutingInterface : public UInterface
@@ -19,7 +20,7 @@ class DELIVERYSIMULATOR_API IScreenRoutingInterface
 	GENERATED_BODY()
 
 public:
-	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate) = 0;
+	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate) = 0;
 };
 
 

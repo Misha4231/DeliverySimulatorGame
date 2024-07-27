@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
+#include "RestaurantPassObject.h"
 #include "OrdersListEntry.generated.h"
 
 /**
@@ -21,31 +22,23 @@ class DELIVERYSIMULATOR_API UOrdersListEntry : public UUserWidget, public IUserO
 
 public:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+	virtual void NativeConstruct() override;
+	
+	UPROPERTY(BlueprintReadWrite)
+	URestaurantPassObject* OrderData;
+	
+	UPROPERTY(meta=(BindWidget))
+	UButton* GoToDetailsButton;
 
 	UPROPERTY(meta=(BindWidget))
-	UButton* TakeOrderButton;
-
-	UPROPERTY(meta=(BindWidget))
-	UTextBlock* Destination;
-
-	UPROPERTY(meta=(BindWidget))
-	UTextBlock* RestaurantName;
+	UTextBlock* Distance;
 
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* PercentFee;
 
 	UPROPERTY(meta=(BindWidget))
-	UButton* ProductsCollapseButton;
+	UTextBlock* Earnings;
 
-	UPROPERTY(meta=(BindWidget))
-	UImage* CollapseIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* CollapseOpenedIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* CollapseCloseIcon;
-
-	UPROPERTY(meta=(BindWidget))
-	UListView* ProductsList;
+	UFUNCTION()
+	void GoToDetails();
 };

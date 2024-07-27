@@ -3,7 +3,7 @@
 
 #include "WeatherScreen.h"
 
-void UWeatherScreen::SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate)
+void UWeatherScreen::SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate)
 {
 	ScreenChangeDelegate = InScreenChangeDelegate;
 }

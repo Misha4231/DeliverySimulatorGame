@@ -41,6 +41,27 @@ const int UMainGameInstance::GetCurrentOrdersLength() const
 	return Orders.Num();
 }
 
+void UMainGameInstance::CurrentOrderDone()
+{
+	LoadOrdersSlotData();
+	OrdersSave->CancelCurrentOrderDelivering();
+
+	// Give Money on balance
+}
+
+void UMainGameInstance::CancelCurrentOrder()
+{
+	LoadOrdersSlotData();
+	OrdersSave->CancelCurrentOrderDelivering();
+}
+
+FOrder UMainGameInstance::SetCurrentOrder(int Id)
+{
+	LoadOrdersSlotData();
+
+	return OrdersSave->SetCurrentOrderDelivering(Id);
+}
+
 void UMainGameInstance::LoadOrdersSlotData()
 {
 	if(UGameplayStatics::DoesSaveGameExist(OrdersSaveSlotName, 0))
@@ -71,11 +92,7 @@ void UMainGameInstance::SaveOrdersSlotData()
 
 void UMainGameInstance::AddOrder()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Black, "Add Order");
-
 	OrdersSave->AddOrder(Restaurants, Products, Destinations);
 	SaveOrdersSlotData();
 	LoadOrdersSlotData();
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Black, FString::FormatAsNumber(Orders.Num()));
 }
