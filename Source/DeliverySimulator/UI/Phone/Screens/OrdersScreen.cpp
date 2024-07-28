@@ -59,5 +59,5 @@ void UOrdersScreen::OnGoToDetails(URestaurantPassObject* SelectedOrder) {
 		}
 	}
 	
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString("Go to details of order #") + FString::FormatAsNumber(SelectedOrder->Order.Id));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString("Go to details of order #") + FString::FormatAsNumber(SelectedOrder->Order.Id));
 }

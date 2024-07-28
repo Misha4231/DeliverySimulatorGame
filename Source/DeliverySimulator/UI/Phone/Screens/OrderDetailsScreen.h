@@ -9,6 +9,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "DeliverySimulator/UI/Phone/Components/RestaurantPassObject.h"
+#include "DeliverySimulator/UI/Phone/Components/ProductPassObject.h"
 #include "OrderDetailsScreen.generated.h"
 
 /**
@@ -52,4 +53,7 @@ public:
 
 	UFUNCTION()
 	void SetOrderData(URestaurantPassObject* InOrderData);
+
+	UFUNCTION()
+	void TakeOrderButtonClicked();
 };
