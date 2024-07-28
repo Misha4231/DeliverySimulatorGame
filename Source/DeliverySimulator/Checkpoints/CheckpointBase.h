@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Data")
 	FString Name;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Data")
+	int Id;
+
 protected:
 	UFUNCTION()
 	virtual void OnCollisionEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult){};

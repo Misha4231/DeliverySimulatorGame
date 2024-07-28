@@ -18,7 +18,7 @@ void UOrdersListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 		));
 
 		Earnings->SetText(FText::FromString(
-			FString::SanitizeFloat(OrderData->Order.CalculateEarnings()) + "$"
+			OrderData->Order.CalculateEarnings() + "$"
 		));
 	}
 }

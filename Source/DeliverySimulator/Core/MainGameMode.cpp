@@ -25,7 +25,7 @@ void AMainGameMode::BeginPlay()
 			{
 				FRestaurant NewRestaurant = FRestaurant();
 			
-				NewRestaurant.Id = RestaurantCheckpoint->GetUniqueID();
+				NewRestaurant.Id = RestaurantCheckpoint->Id;
 				NewRestaurant.Location = RestaurantCheckpoint->GetActorLocation();
 				NewRestaurant.Name = RestaurantCheckpoint->Name;
 				NewRestaurant.AvailableFoodIds = RestaurantCheckpoint->AvailableFoodIds;
@@ -46,7 +46,7 @@ void AMainGameMode::BeginPlay()
 			{
 				FDestination NewDestination = FDestination();
 			
-				NewDestination.Id = DestinationCheckpoint->GetUniqueID();
+				NewDestination.Id = DestinationCheckpoint->Id;
 				NewDestination.Location = DestinationCheckpoint->GetActorLocation();
 				NewDestination.Name = DestinationCheckpoint->Name;
 			

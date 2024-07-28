@@ -32,6 +32,14 @@ bool USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<
 			NewOrder.ProductList.Add(NewOrderProduct);
 		}
 	}
+	if (NewOrder.ProductList.Num() == 0) {
+		FOrderProduct NewOrderProduct = FOrderProduct();
+			NewOrderProduct.Product = AvailableProducts[0];
+			NewOrderProduct.Quantity = FMath::RandRange(1, SumQuantity);
+			SumQuantity -= NewOrderProduct.Quantity;
+			
+			NewOrder.ProductList.Add(NewOrderProduct);
+	}
 
 	CurrentOrders.Add(NewOrder);
 	
@@ -53,7 +61,7 @@ void USG_OrdersSlot::CancelCurrentOrderDelivering() {
 	CurrentOrderDelivering = FOrder();
 }
 
-float FOrder::CalculateEarnings()
+FString FOrder::CalculateEarnings()
 {
     float OrderCost = 0;
 	for (const FOrderProduct& Product : this->ProductList)
@@ -62,6 +70,7 @@ float FOrder::CalculateEarnings()
     }
 
 	float ClearEarnings = (this->PercentFee * OrderCost) / 100.f;
-	float ClearEarningsRounded = FMath::RoundHalfToEven(ClearEarnings * 100.0f) / 100.0f;
-	return ClearEarningsRounded;
+	//int ClearEarningsRounded = (int)(ClearEarnings * 100);
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::SanitizeFloat(round(ClearEarnings * 100.f) / 100.f));
+	return FString::SanitizeFloat(round(ClearEarnings * 100.f) / 100.f);
 }

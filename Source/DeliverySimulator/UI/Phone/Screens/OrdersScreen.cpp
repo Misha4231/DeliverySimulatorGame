@@ -43,8 +43,9 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 		RestaurantTitle->SetText(FText::FromString(CurrentDelieringOrder.Restaurant.Name));
 		DestinationTitle->SetText(FText::FromString(CurrentDelieringOrder.Destination.Name));
+		
 		TotalEarnings->SetText(FText::FromString(
-			FString::SanitizeFloat(CurrentDelieringOrder.CalculateEarnings())
+			CurrentDelieringOrder.CalculateEarnings()
 		));
 	}
 	else if (MainGameInstance && OrdersList && MainGameInstance->GetCurrentOrdersLength() != OrdersList->GetNumItems())
