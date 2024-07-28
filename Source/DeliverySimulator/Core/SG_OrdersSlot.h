@@ -86,6 +86,9 @@ struct FOrder
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PercentFee;
+
+	UFUNCTION(BlueprintCallable)
+	float CalculateEarnings();
 };
 
 /**

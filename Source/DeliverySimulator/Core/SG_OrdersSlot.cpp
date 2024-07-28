@@ -52,3 +52,16 @@ FOrder USG_OrdersSlot::SetCurrentOrderDelivering(int Id) {
 void USG_OrdersSlot::CancelCurrentOrderDelivering() {
 	CurrentOrderDelivering = FOrder();
 }
+
+float FOrder::CalculateEarnings()
+{
+    float OrderCost = 0;
+	for (const FOrderProduct& Product : this->ProductList)
+	{
+		OrderCost += Product.Quantity * Product.Product.Price;
+    }
+
+	float ClearEarnings = (this->PercentFee * OrderCost) / 100.f;
+	float ClearEarningsRounded = FMath::RoundHalfToEven(ClearEarnings * 100.0f) / 100.0f;
+	return ClearEarningsRounded;
+}
