@@ -44,6 +44,9 @@ public:
 	void CancelCurrentOrder();
 
 	UFUNCTION(BlueprintCallable)
+	FOrder& GetCurrentOrder();
+
+	UFUNCTION(BlueprintCallable)
 	void LoadOrdersSlotData();
 
 	UFUNCTION(BlueprintCallable)

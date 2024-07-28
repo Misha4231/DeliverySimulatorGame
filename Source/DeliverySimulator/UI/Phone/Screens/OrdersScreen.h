@@ -34,20 +34,23 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UListView* OrdersList;
 
+	UPROPERTY(meta=(BindWidget))
+	UBorder *OrdersListWrapper;
+
 	UPROPERTY()
 	UMainGameInstance* MainGameInstance;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> OrderDetailsScreenClass;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> OrdersScreenClass;
+
 	UFUNCTION()
 	void OnOrderTaken(int Id);
 
 	UFUNCTION()
 	void OnGoToDetails(URestaurantPassObject* SelectedOrder);
-
-	UPROPERTY(meta=(BindWidget))
-	UBorder *OrdersListWrapper;
 
 	UPROPERTY(meta=(BindWidget))
 	UGridPanel *CurrentOrderWrapper;
@@ -66,4 +69,7 @@ public:
 
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock *TotalEarnings;
+
+private:
+	int CurrentDisplayingTakenOrderId;
 };

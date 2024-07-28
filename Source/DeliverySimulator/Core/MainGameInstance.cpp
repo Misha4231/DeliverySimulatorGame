@@ -55,11 +55,21 @@ void UMainGameInstance::CancelCurrentOrder()
 	OrdersSave->CancelCurrentOrderDelivering();
 }
 
+FOrder& UMainGameInstance::GetCurrentOrder()
+{
+    LoadOrdersSlotData();
+
+	return OrdersSave->CurrentOrderDelivering;
+}
+
 FOrder UMainGameInstance::SetCurrentOrder(int Id)
 {
 	LoadOrdersSlotData();
 
-	return OrdersSave->SetCurrentOrderDelivering(Id);
+	FOrder Order = OrdersSave->SetCurrentOrderDelivering(Id);
+	SaveOrdersSlotData();
+
+	return Order;
 }
 
 void UMainGameInstance::LoadOrdersSlotData()

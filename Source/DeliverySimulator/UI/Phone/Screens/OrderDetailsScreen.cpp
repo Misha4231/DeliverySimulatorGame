@@ -16,22 +16,16 @@ void UOrderDetailsScreen::NativeConstruct()
 		FString::FormatAsNumber(OrderData->Order.PercentFee) + "%"
 	));
 
-	float OrderCost = 0;
 	for (const FOrderProduct& Product : OrderData->Order.ProductList)
 	{
-		OrderCost += Product.Quantity * Product.Product.Price;
-
         UProductPassObject *ProductData = NewObject<UProductPassObject>(this);
         ProductData->Product = Product;
         
         ProductsListView->AddItem(ProductData);
     }
-
-	float ClearEarnings = (OrderData->Order.PercentFee * OrderCost) / 100.f;
-	float ClearEarningsRounded = FMath::RoundHalfToEven(ClearEarnings * 100.0f) / 100.0f;
-
-	Earnings->SetText(FText::FromString(
-		FString::SanitizeFloat(ClearEarningsRounded) + "$"
+    
+    Earnings->SetText(FText::FromString(
+		FString::SanitizeFloat(OrderData->Order.CalculateEarnings()) + "$"
 	));
 
     TakeOrderButton->OnClicked.AddDynamic(this, &UOrderDetailsScreen::TakeOrderButtonClicked);

@@ -16,6 +16,10 @@ void UOrdersScreen::NativeConstruct()
 	Super::NativeConstruct();
 
 	MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
+
+	if (MainGameInstance && MainGameInstance->GetCurrentOrder().Id == 0) {
+		CurrentDisplayingTakenOrderId = 0;
+	}
 }
 
 void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -24,7 +28,26 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (!MainGameInstance) MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
 
-	if (MainGameInstance && MainGameInstance->GetCurrentOrdersLength() != OrdersList->GetNumItems())
+	FOrder &CurrentDelieringOrder = MainGameInstance->GetCurrentOrder();
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::FormatAsNumber(CurrentDelieringOrder.Id));
+	if (CurrentDelieringOrder.Id == 0) {
+		CurrentOrderWrapper->SetVisibility(ESlateVisibility::Hidden);
+		OrdersListWrapper->SetVisibility(ESlateVisibility::Visible);
+	} else {
+		OrdersListWrapper->SetVisibility(ESlateVisibility::Hidden);
+		CurrentOrderWrapper->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	if (MainGameInstance && CurrentDelieringOrder.Id != CurrentDisplayingTakenOrderId) {
+		CurrentDisplayingTakenOrderId = CurrentDelieringOrder.Id;
+
+		RestaurantTitle->SetText(FText::FromString(CurrentDelieringOrder.Restaurant.Name));
+		DestinationTitle->SetText(FText::FromString(CurrentDelieringOrder.Destination.Name));
+		TotalEarnings->SetText(FText::FromString(
+			FString::SanitizeFloat(CurrentDelieringOrder.CalculateEarnings())
+		));
+	}
+	else if (MainGameInstance && OrdersList && MainGameInstance->GetCurrentOrdersLength() != OrdersList->GetNumItems())
 	{
 		OrdersList->ClearListItems();
 		const TArray<FOrder>& CurrentOrders = MainGameInstance->GetCurrentOrders();
@@ -47,6 +70,14 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UOrdersScreen::OnOrderTaken(int Id) {
 	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString("Order #") + FString::FormatAsNumber(Id) + FString(" taken"));
+
+	if (MainGameInstance) {
+		MainGameInstance->SetCurrentOrder(Id);
+
+		if (ScreenChangeDelegate.IsBound()) {
+			ScreenChangeDelegate.Execute(OrdersScreenClass);
+		}
+	}
 }
 
 void UOrdersScreen::OnGoToDetails(URestaurantPassObject* SelectedOrder) {

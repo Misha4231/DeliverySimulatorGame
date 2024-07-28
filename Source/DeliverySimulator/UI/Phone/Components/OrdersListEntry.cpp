@@ -17,21 +17,8 @@ void UOrdersListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 			FString::FormatAsNumber(OrderData->Order.PercentFee) + "%"
 		));
 
-		float OrderCost = 0;
-		for (const FOrderProduct& Product : OrderData->Order.ProductList)
-		{
-			OrderCost += Product.Quantity * Product.Product.Price;
-			// UProductPassObject* PassObject = NewObject<UProductPassObject>(this);
-			// PassObject->Product = Product;
-
-			// ProductsList->AddItem(PassObject);
-		}
-
-		float ClearEarnings = (OrderData->Order.PercentFee * OrderCost) / 100.f;
-		float ClearEarningsRounded = FMath::RoundHalfToEven(ClearEarnings * 100.0f) / 100.0f;
-
 		Earnings->SetText(FText::FromString(
-			FString::SanitizeFloat(ClearEarningsRounded) + "$"
+			FString::SanitizeFloat(OrderData->Order.CalculateEarnings()) + "$"
 		));
 	}
 }
