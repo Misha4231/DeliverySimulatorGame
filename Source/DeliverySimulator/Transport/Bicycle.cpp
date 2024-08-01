@@ -110,11 +110,25 @@ void ABicycle::GetOutOfBicycle()
 		{
 			int32 const SectionIndex = GetOutOfBicycleMontage->GetSectionIndex("Default");
 			int32 const SectionLength = GetOutOfBicycleMontage->GetSectionLength(SectionIndex);
-			
+
+
+			const FVector PossessLocation = bRightBody ?
+				GetMesh()->GetSocketLocation("get_from_right_socket") :
+				GetMesh()->GetSocketLocation("get_from_left_socket");
+
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			AThirdPersonCharacter* Character = GetWorld()->SpawnActor<AThirdPersonCharacter>(CharacterClass, PossessLocation, GetActorRotation(), SpawnParams);
+			Character->GetMesh()->SetVisibility(false);
+
+			APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			PlayerController->SetViewTargetWithBlend(Character, 2.f);
+
+
 			AnimInstance->Montage_Play(GetOutOfBicycleMontage);
-			GetWorldTimerManager().SetTimer(GetOutOfBicycleHandle, [this, bRightBody]()
+			GetWorldTimerManager().SetTimer(GetOutOfBicycleHandle, [this, Character]()
 			{
-				PossessCharacter(!bRightBody);
+				PossessCharacter(Character);
 			}, SectionLength, false);
 		}
 	}
@@ -208,20 +222,13 @@ bool ABicycle::SideRayCast(const FVector& Direction) const
 	return false;
 }
 
-void ABicycle::PossessCharacter(const bool Side)
+void ABicycle::PossessCharacter(AThirdPersonCharacter* Character)
 {
-	const FVector PossessLocation = Side ?
-		GetMesh()->GetSocketLocation("get_from_right_socket") :
-		GetMesh()->GetSocketLocation("get_from_left_socket");
-	
 	CharacterMesh->SetVisibility(false);
+	Character->GetMesh()->SetVisibility(true);
 	
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	AThirdPersonCharacter* Character = GetWorld()->SpawnActor<AThirdPersonCharacter>(CharacterClass, PossessLocation, GetActorRotation(), SpawnParams);
-	if (!Character)
+	if (Character)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, "not character");
+		GetController()->Possess(Character);
 	}
-	GetController()->Possess(Character);
 }

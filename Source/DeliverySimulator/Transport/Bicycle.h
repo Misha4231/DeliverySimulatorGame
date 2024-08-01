@@ -121,5 +121,5 @@ private:
 	FTimerHandle GetOutOfBicycleHandle;
 
 	UFUNCTION()
-	void PossessCharacter(const bool Side);
+	void PossessCharacter(AThirdPersonCharacter* Character);
 };

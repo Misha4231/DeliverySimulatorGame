@@ -155,7 +155,9 @@ void AThirdPersonCharacter::GetOnBicycleAnimation(bool Side)
 			
 			int32 const SectionIndex = GetOnBicycleMontage->GetSectionIndex("Default");
 			int32 const SectionLength = GetOnBicycleMontage->GetSectionLength(SectionIndex);
-			
+
+			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			PlayerController->SetViewTargetWithBlend(ClosestBicycle, 2.f);
 			AnimInstance->Montage_Play(GetOnBicycleMontage);
 			
 			GetWorldTimerManager().SetTimer(GetInTransportTimer,this, &AThirdPersonCharacter::GetOnBicycle, SectionLength, false);
@@ -175,6 +177,7 @@ void AThirdPersonCharacter::GetOnBicycle()
 	GetMesh()->SetVisibility(false);
 	ClosestBicycle->CharacterMesh->SetVisibility(true);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(ClosestBicycle);
+	this->Destroy();
 }
 
 
