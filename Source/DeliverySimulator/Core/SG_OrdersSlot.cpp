@@ -8,7 +8,8 @@ bool USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<
 	if (CurrentOrders.Num() >= 10) return false;
 
 	FOrder NewOrder = FOrder();
-	
+	NewOrder.State = OrderState::NotTaken;
+
 	if (CurrentOrders.Num() > 0) NewOrder.Id = CurrentOrders.Last().Id + 1;
 	else NewOrder.Id = 1;
 	
@@ -50,6 +51,8 @@ FOrder USG_OrdersSlot::SetCurrentOrderDelivering(int Id) {
 	for (auto Order : CurrentOrders) {
 		if (Order.Id == Id) {
 			CurrentOrderDelivering = Order;
+			CurrentOrderDelivering.State = OrderState::Taken;
+			
 			break;
 		}
 	}
@@ -70,7 +73,6 @@ FString FOrder::CalculateEarnings()
     }
 
 	float ClearEarnings = (this->PercentFee * OrderCost) / 100.f;
-	//int ClearEarningsRounded = (int)(ClearEarnings * 100);
-	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::SanitizeFloat(round(ClearEarnings * 100.f) / 100.f));
+
 	return FString::SanitizeFloat(round(ClearEarnings * 100.f) / 100.f);
 }

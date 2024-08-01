@@ -67,6 +67,15 @@ struct FOrderProduct
 	int Quantity;
 };
 
+UENUM()
+enum OrderState
+{
+	NotTaken UMETA(DisplayName = "Not Taken"),
+	Taken UMETA(DisplayName = "Taken"),
+	PoductsTaken UMETA(DisplayName = "Poducts Taken"),
+	Delivered UMETA(DisplayName = "Delivered"),
+};
+
 USTRUCT(BlueprintType)
 struct FOrder
 {
@@ -86,6 +95,9 @@ struct FOrder
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PercentFee;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<OrderState> State;
 
 	FString CalculateEarnings();
 };
