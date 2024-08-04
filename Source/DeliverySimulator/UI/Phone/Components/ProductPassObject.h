@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include <DeliverySimulator/Core/SG_OrdersSlot.h>
+#include "DeliverySimulator/Core/SaveGameSlots/SG_OrdersSlot.h"
 #include "ProductPassObject.generated.h"
 
 /**

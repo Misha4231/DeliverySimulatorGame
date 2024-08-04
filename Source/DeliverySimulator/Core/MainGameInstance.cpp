@@ -21,7 +21,7 @@ void UMainGameInstance::Init()
 			Products.Add(*Product);
 		}
 	}
-	
+
 	LoadOrdersSlotData();
 	GetTimerManager().SetTimer(OrdersTimerHandle,this, &UMainGameInstance::AddOrder, 5.f, true);
 }

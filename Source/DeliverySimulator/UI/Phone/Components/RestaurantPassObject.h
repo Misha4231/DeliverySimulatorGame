@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <DeliverySimulator/Core/SG_OrdersSlot.h>
+#include "DeliverySimulator/Core/SaveGameSlots/SG_OrdersSlot.h"
 #include <DeliverySimulator/UI/Phone/Screens/OrdersScreen.h>
 #include "RestaurantPassObject.generated.h"
 
