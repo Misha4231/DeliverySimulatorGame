@@ -20,8 +20,8 @@ void ARestaurantCheckpoint::OnCollisionEnter(UPrimitiveComponent* OverlappedComp
 		return;
 
 	UMainGameInstance *GameInstance = Cast<UMainGameInstance>(GetGameInstance());
-	if (GameInstance) {
-		FOrder &CurrentOrder = GameInstance->GetCurrentOrder();
+	if (GameInstance && GameInstance->OrdersSubsystem) {
+		FOrder &CurrentOrder = GameInstance->OrdersSubsystem->GetCurrentOrder();
 
 		if (CurrentOrder.Restaurant.Id == Id) {
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Products are taken");

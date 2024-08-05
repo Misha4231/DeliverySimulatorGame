@@ -30,7 +30,7 @@ void AMainGameMode::BeginPlay()
 				NewRestaurant.Name = RestaurantCheckpoint->Name;
 				NewRestaurant.AvailableFoodIds = RestaurantCheckpoint->AvailableFoodIds;
 			
-				GameInstance->Restaurants.Add(NewRestaurant);
+				GameInstance->OrdersSubsystem->Restaurants.Add(NewRestaurant);
 			}
 		}
 	}
@@ -50,7 +50,7 @@ void AMainGameMode::BeginPlay()
 				NewDestination.Location = DestinationCheckpoint->GetActorLocation();
 				NewDestination.Name = DestinationCheckpoint->Name;
 			
-				GameInstance->Destinations.Add(NewDestination);
+				GameInstance->OrdersSubsystem->Destinations.Add(NewDestination);
 			}
 		}
 	}

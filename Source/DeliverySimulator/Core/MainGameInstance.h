@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "DeliverySimulator/Core/SaveGameSlots/SG_OrdersSlot.h"
-#include "DeliverySimulator/Checkpoints/DestinationCheckpoint.h"
-#include "DeliverySimulator/Checkpoints/RestaurantCheckpoint.h"
+// #include "DeliverySimulator/Core/SaveGameSlots/SG_OrdersSlot.h"
+// #include "DeliverySimulator/Checkpoints/DestinationCheckpoint.h"
+// #include "DeliverySimulator/Checkpoints/RestaurantCheckpoint.h"
+#include "Subsystems/OrdersSubsystem.h"
 #include "MainGameInstance.generated.h"
 
 /**
@@ -20,58 +21,10 @@ class DELIVERYSIMULATOR_API UMainGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
-	
-	UFUNCTION(BlueprintCallable, Category = "OrderData")
-	const TArray<FProduct>& GetProducts() const;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+	UOrdersSubsystem *OrdersSubsystem;
 
-	UFUNCTION(BlueprintCallable, Category = "OrderData")
-	const TArray<FOrder>& GetCurrentOrders() const;
-
-	UFUNCTION(BlueprintCallable, Category = "OrderData")
-	const int GetCurrentOrdersLength() const;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OrderData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orders")
 	UDataTable* ProductsDataTable;
 
-
-	UFUNCTION(BlueprintCallable)
-	FOrder SetCurrentOrder(int Id);
-
-	UFUNCTION(BlueprintCallable)
-	void CurrentOrderDone();
-
-	UFUNCTION(BlueprintCallable)
-	void CancelCurrentOrder();
-
-	UFUNCTION(BlueprintCallable)
-	FOrder& GetCurrentOrder();
-
-	UFUNCTION(BlueprintCallable)
-	void LoadOrdersSlotData();
-
-	UFUNCTION(BlueprintCallable)
-	void SaveOrdersSlotData();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OrderData")
-	TArray<FRestaurant> Restaurants;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OrderData")
-	TArray<FDestination> Destinations;
-
-	UFUNCTION(BlueprintCallable)
-	void AddOrder();
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OrderData")
-	TArray<FProduct> Products;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OrderData")
-	TArray<FOrder> Orders;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OrderData")
-	FString OrdersSaveSlotName = "OrderSave";
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OrderData")
-	USG_OrdersSlot* OrdersSave;
-
-	FTimerHandle OrdersTimerHandle;
 };

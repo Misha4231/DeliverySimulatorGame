@@ -15,8 +15,8 @@ void ADestinationCheckpoint::OnCollisionEnter(UPrimitiveComponent* OverlappedCom
 		return;
 
 	UMainGameInstance *GameInstance = Cast<UMainGameInstance>(GetGameInstance());
-	if (GameInstance) {
-		FOrder &CurrentOrder = GameInstance->GetCurrentOrder();
+	if (GameInstance && GameInstance->OrdersSubsystem) {
+		FOrder &CurrentOrder = GameInstance->OrdersSubsystem->GetCurrentOrder();
 
 		if (CurrentOrder.Destination.Id == Id) {
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Products are delivered, Congratulations!");

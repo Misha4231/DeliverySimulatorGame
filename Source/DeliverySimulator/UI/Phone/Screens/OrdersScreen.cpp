@@ -17,7 +17,7 @@ void UOrdersScreen::NativeConstruct()
 
 	MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
 
-	if (MainGameInstance && MainGameInstance->GetCurrentOrder().Id == 0) {
+	if (MainGameInstance && MainGameInstance->OrdersSubsystem && MainGameInstance->OrdersSubsystem->GetCurrentOrder().Id == 0) {
 		CurrentDisplayingTakenOrderId = 0;
 	}
 }
@@ -26,9 +26,9 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (!MainGameInstance) MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
+	if (!MainGameInstance || !MainGameInstance->OrdersSubsystem) MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
 
-	FOrder &CurrentDelieringOrder = MainGameInstance->GetCurrentOrder();
+	FOrder &CurrentDelieringOrder = MainGameInstance->OrdersSubsystem->GetCurrentOrder();
 	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::FormatAsNumber(CurrentDelieringOrder.Id));
 	if (CurrentDelieringOrder.Id == 0) {
 		CurrentOrderWrapper->SetVisibility(ESlateVisibility::Hidden);
@@ -38,7 +38,7 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		CurrentOrderWrapper->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	if (MainGameInstance && CurrentDelieringOrder.Id != CurrentDisplayingTakenOrderId) {
+	if (MainGameInstance && MainGameInstance->OrdersSubsystem && CurrentDelieringOrder.Id != CurrentDisplayingTakenOrderId) {
 		CurrentDisplayingTakenOrderId = CurrentDelieringOrder.Id;
 
 		RestaurantTitle->SetText(FText::FromString(CurrentDelieringOrder.Restaurant.Name));
@@ -48,10 +48,10 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			CurrentDelieringOrder.CalculateEarnings()
 		));
 	}
-	else if (MainGameInstance && OrdersList && MainGameInstance->GetCurrentOrdersLength() != OrdersList->GetNumItems())
+	else if (MainGameInstance && MainGameInstance->OrdersSubsystem && OrdersList && MainGameInstance->OrdersSubsystem->GetCurrentOrdersLength() != OrdersList->GetNumItems())
 	{
 		OrdersList->ClearListItems();
-		const TArray<FOrder>& CurrentOrders = MainGameInstance->GetCurrentOrders();
+		const TArray<FOrder>& CurrentOrders = MainGameInstance->OrdersSubsystem->GetCurrentOrders();
 		
 		for (const FOrder& Order : CurrentOrders)
 		{
@@ -72,8 +72,8 @@ void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 void UOrdersScreen::OnOrderTaken(int Id) {
 	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString("Order #") + FString::FormatAsNumber(Id) + FString(" taken"));
 
-	if (MainGameInstance) {
-		MainGameInstance->SetCurrentOrder(Id);
+	if (MainGameInstance && MainGameInstance->OrdersSubsystem) {
+		MainGameInstance->OrdersSubsystem->SetCurrentOrder(Id);
 
 		if (ScreenChangeDelegate.IsBound()) {
 			ScreenChangeDelegate.Execute(OrdersScreenClass);

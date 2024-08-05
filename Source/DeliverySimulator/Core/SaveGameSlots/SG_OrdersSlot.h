@@ -72,8 +72,7 @@ enum OrderState
 {
 	NotTaken UMETA(DisplayName = "Not Taken"),
 	Taken UMETA(DisplayName = "Taken"),
-	PoductsTaken UMETA(DisplayName = "Poducts Taken"),
-	Delivered UMETA(DisplayName = "Delivered"),
+	PoductsTaken UMETA(DisplayName = "Poducts Taken")
 };
 
 USTRUCT(BlueprintType)
