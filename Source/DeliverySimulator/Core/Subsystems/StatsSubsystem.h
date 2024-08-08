@@ -7,6 +7,7 @@
 #include "../SaveGameSlots/SG_StatsSlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Delegates/DelegateCombinations.h"
+#include "SavebleSubsystemBase.h"
 #include "StatsSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBalanceUpdateDispatcher, float, NewBalance);
@@ -16,18 +17,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBalanceUpdateDispatcher, float, New
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API UStatsSubsystem : public UObject
+class DELIVERYSIMULATOR_API UStatsSubsystem : public USavebleSubsystemBase
 {
 	GENERATED_BODY()
 	
 public:
-	void InitializeSubsystem();
-
-	UFUNCTION(BlueprintCallable)
-	void LoadDataFromSlot();
-
-	UFUNCTION(BlueprintCallable)
-	void SaveDataToSlot();
+	void InitializeSubsystem(FString SaveSlotName);
 
 public: // balance functionality
 	UFUNCTION(BlueprintCallable)
@@ -41,9 +36,6 @@ public: // events
 	FBalanceUpdateDispatcher BalanceDispatcher;
 
 private:
-	UPROPERTY()
-	FString StatsSaveSlotName = "StatsSave";
-
 	UPROPERTY()
 	USG_StatsSlot *StatsSave;
 };

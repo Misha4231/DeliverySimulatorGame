@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "../SaveGameSlots/SG_OrdersSlot.h"
 #include "Delegates/DelegateCombinations.h"
+#include "SavebleSubsystemBase.h"
 #include "OrdersSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewOrderDelegate, FOrder, NewOrder);
@@ -13,12 +14,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewOrderDelegate, FOrder, NewOrder)
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API UOrdersSubsystem : public UObject
+class DELIVERYSIMULATOR_API UOrdersSubsystem : public USavebleSubsystemBase
 {
 	GENERATED_BODY()
 	
 public:
-	void InitializeSubsystem(UDataTable *ProductsDataTable, FTimerManager& TimerManger);
+	void InitializeSubsystem(FString InSaveSlotName, UDataTable *ProductsDataTable, FTimerManager& TimerManger);
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "OrderData")
@@ -55,17 +56,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FNewOrderDelegate NewOrderDispatcher;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void LoadOrdersSlotData();
-
-	UFUNCTION(BlueprintCallable)
-	void SaveOrdersSlotData();
-	
 private:
-	UPROPERTY()
-	FString OrdersSaveSlotName = "OrderSave";
-
 	UPROPERTY()
 	USG_OrdersSlot* OrdersSave;
 

@@ -5,12 +5,12 @@
 #include "Kismet/GameplayStatics.h"
 
 
-void UOrdersSubsystem::InitializeSubsystem(UDataTable *ProductsDataTable, FTimerManager& TimerManger)
+void UOrdersSubsystem::InitializeSubsystem(FString InSaveSlotName, UDataTable *ProductsDataTable, FTimerManager& TimerManger)
 {
+	InitializeSavingSystem(InSaveSlotName, USG_OrdersSlot::StaticClass());
 
-    if (ProductsDataTable)
+	if (ProductsDataTable)
 	{
-		
 		const FString ContextString(TEXT("Product Data Context"));
 		TArray<FProduct*> TempArray;
 		ProductsDataTable->GetAllRows<FProduct>(ContextString, TempArray);
@@ -21,7 +21,7 @@ void UOrdersSubsystem::InitializeSubsystem(UDataTable *ProductsDataTable, FTimer
 		}
 	}
 
-	LoadOrdersSlotData();
+	OrdersSave = Cast<USG_OrdersSlot>(LoadSlotData());
 	TimerManger.SetTimer(OrdersTimerHandle,this, &UOrdersSubsystem::AddOrder, 5.f, true);
 }
 
@@ -33,31 +33,31 @@ const TArray<FProduct>& UOrdersSubsystem::GetProducts() const
 
 TArray<FOrder>& UOrdersSubsystem::GetCurrentOrders()
 {
-	LoadOrdersSlotData();
+	OrdersSave = Cast<USG_OrdersSlot>(LoadSlotData());
 	return OrdersSave->CurrentOrders;
 }
 
 
 FOrder& UOrdersSubsystem::GetCurrentOrder()
 {
-    LoadOrdersSlotData();
+    OrdersSave = Cast<USG_OrdersSlot>(LoadSlotData());
 
 	return OrdersSave->CurrentOrderDelivering;
 }
 
 FOrder UOrdersSubsystem::SetCurrentOrder(int Id)
 {
-	LoadOrdersSlotData();
+	OrdersSave = Cast<USG_OrdersSlot>(LoadSlotData());
 
 	FOrder Order = OrdersSave->SetCurrentOrderDelivering(Id);
-	SaveOrdersSlotData();
+	SaveSlotData(OrdersSave);
 
 	return Order;
 }
 
 void UOrdersSubsystem::SetCurrentOrderState(OrderState NewState)
 {
-	LoadOrdersSlotData();
+	OrdersSave = Cast<USG_OrdersSlot>(LoadSlotData());
 	
 	if (NewState == OrderState::NotTaken) {
 		OrdersSave->RemoveOrder(OrdersSave->CurrentOrderDelivering);
@@ -67,32 +67,7 @@ void UOrdersSubsystem::SetCurrentOrderState(OrderState NewState)
 		OrdersSave->CurrentOrderDelivering.State = NewState;
 	}
 
-	SaveOrdersSlotData();
-}
-
-void UOrdersSubsystem::LoadOrdersSlotData()
-{
-	if(UGameplayStatics::DoesSaveGameExist(OrdersSaveSlotName, 0))
-	{
-		OrdersSave = Cast<USG_OrdersSlot>(UGameplayStatics::LoadGameFromSlot(OrdersSaveSlotName, 0));
-	} else
-	{
-		OrdersSave = Cast<USG_OrdersSlot>(UGameplayStatics::CreateSaveGameObject(USG_OrdersSlot::StaticClass()));
-		UGameplayStatics::SaveGameToSlot(OrdersSave, OrdersSaveSlotName, 0);
-	}
-}
-
-void UOrdersSubsystem::SaveOrdersSlotData()
-{
-	if(UGameplayStatics::DoesSaveGameExist(OrdersSaveSlotName, 0))
-	{
-		UGameplayStatics::SaveGameToSlot(OrdersSave, OrdersSaveSlotName, 0);
-		
-	} else
-	{
-		OrdersSave = Cast<USG_OrdersSlot>(UGameplayStatics::CreateSaveGameObject(USG_OrdersSlot::StaticClass()));
-		UGameplayStatics::SaveGameToSlot(OrdersSave, OrdersSaveSlotName, 0);
-	}
+	SaveSlotData(OrdersSave);
 }
 
 void UOrdersSubsystem::AddOrder()
@@ -100,8 +75,8 @@ void UOrdersSubsystem::AddOrder()
 	FOrder NewOrder = OrdersSave->AddOrder(Restaurants, Products, Destinations);
 
 	if (NewOrder.Id != 0) {
-		SaveOrdersSlotData();
-		LoadOrdersSlotData();
+		SaveSlotData(OrdersSave);
+		OrdersSave = Cast<USG_OrdersSlot>(LoadSlotData());
 
 		NewOrderDispatcher.Broadcast(NewOrder);
 	}

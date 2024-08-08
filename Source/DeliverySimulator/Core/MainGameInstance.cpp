@@ -10,10 +10,10 @@ void UMainGameInstance::Init()
 	Super::Init();
 
 	OrdersSubsystem = NewObject<UOrdersSubsystem>(UOrdersSubsystem::StaticClass());
-	OrdersSubsystem->InitializeSubsystem(ProductsDataTable, GetTimerManager());
+	OrdersSubsystem->InitializeSubsystem("OrderSave", ProductsDataTable, GetTimerManager());
 
 	StatsSubsystem = NewObject<UStatsSubsystem>(UStatsSubsystem::StaticClass());
-	StatsSubsystem->InitializeSubsystem();
+	StatsSubsystem->InitializeSubsystem("StatsSave");
 }
 
  

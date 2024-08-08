@@ -3,44 +3,26 @@
 
 #include "StatsSubsystem.h"
 
-void UStatsSubsystem::InitializeSubsystem()
+void UStatsSubsystem::InitializeSubsystem(FString InSaveSlotName)
 {
-    LoadDataFromSlot();
+    InitializeSavingSystem(InSaveSlotName, USG_StatsSlot::StaticClass());
 
-    
+    StatsSave = Cast<USG_StatsSlot>(LoadSlotData());
 }
 
-void UStatsSubsystem::LoadDataFromSlot()
-{
-    if (UGameplayStatics::DoesSaveGameExist(StatsSaveSlotName, 0)) {
-        StatsSave = Cast<USG_StatsSlot>(UGameplayStatics::LoadGameFromSlot(StatsSaveSlotName, 0));
-        
-    } else {
-        StatsSave = Cast<USG_StatsSlot>(UGameplayStatics::CreateSaveGameObject(USG_StatsSlot::StaticClass()));
-        UGameplayStatics::SaveGameToSlot(StatsSave, StatsSaveSlotName, 0);
-    }
-}
-void UStatsSubsystem::SaveDataToSlot(){
-    if (UGameplayStatics::DoesSaveGameExist(StatsSaveSlotName, 0)) {
-        UGameplayStatics::SaveGameToSlot(StatsSave, StatsSaveSlotName, 0);
-    } else {
-        StatsSave = Cast<USG_StatsSlot>(UGameplayStatics::CreateSaveGameObject(USG_StatsSlot::StaticClass()));
-        UGameplayStatics::SaveGameToSlot(StatsSave, StatsSaveSlotName, 0);
-    }
-}
 
 float UStatsSubsystem::GetBalance()
 {
-    LoadDataFromSlot();
+    StatsSave = Cast<USG_StatsSlot>(LoadSlotData());
 
     return StatsSave->Balance;
 }
 
 void UStatsSubsystem::GiveMoney(float Amount)
 {
-    LoadDataFromSlot();
+    StatsSave = Cast<USG_StatsSlot>(LoadSlotData());
     StatsSave->Balance += Amount;
-    SaveDataToSlot();
+    SaveSlotData(StatsSave);
 
     BalanceDispatcher.Broadcast(StatsSave->Balance);
 }
