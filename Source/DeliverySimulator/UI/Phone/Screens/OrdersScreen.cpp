@@ -17,56 +17,34 @@ void UOrdersScreen::NativeConstruct()
 
 	MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
 
-	if (MainGameInstance && MainGameInstance->OrdersSubsystem && MainGameInstance->OrdersSubsystem->GetCurrentOrder().Id == 0) {
-		CurrentDisplayingTakenOrderId = 0;
+	FOrder &CurrentDelieringOrder = MainGameInstance->OrdersSubsystem->GetCurrentOrder();
+	if (MainGameInstance && MainGameInstance->OrdersSubsystem) {
+		if (CurrentDelieringOrder.Id == 0) {
+			CurrentOrderWrapper->SetVisibility(ESlateVisibility::Hidden);
+			OrdersListWrapper->SetVisibility(ESlateVisibility::Visible);
+		} else {
+			OrdersListWrapper->SetVisibility(ESlateVisibility::Hidden);
+			CurrentOrderWrapper->SetVisibility(ESlateVisibility::Visible);
+
+			RestaurantTitle->SetText(FText::FromString(CurrentDelieringOrder.Restaurant.Name));
+			DestinationTitle->SetText(FText::FromString(CurrentDelieringOrder.Destination.Name));
+			
+			TotalEarnings->SetText(FText::FromString(
+				CurrentDelieringOrder.CalculateEarningsString()
+			));
+		}
+
+		TArray<FOrder>& CurrentOrders = MainGameInstance->OrdersSubsystem->GetCurrentOrders();
+		for (int i = 0; i<CurrentOrders.Num(); i++) {
+			OnAddOrderToList(CurrentOrders[i]);
+		}
+		MainGameInstance->OrdersSubsystem->NewOrderDispatcher.AddDynamic(this, &UOrdersScreen::OnAddOrderToList);
 	}
 }
 
 void UOrdersScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (!MainGameInstance || !MainGameInstance->OrdersSubsystem) MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
-
-	FOrder &CurrentDelieringOrder = MainGameInstance->OrdersSubsystem->GetCurrentOrder();
-	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::FormatAsNumber(CurrentDelieringOrder.Id));
-	if (CurrentDelieringOrder.Id == 0) {
-		CurrentOrderWrapper->SetVisibility(ESlateVisibility::Hidden);
-		OrdersListWrapper->SetVisibility(ESlateVisibility::Visible);
-	} else {
-		OrdersListWrapper->SetVisibility(ESlateVisibility::Hidden);
-		CurrentOrderWrapper->SetVisibility(ESlateVisibility::Visible);
-	}
-
-	if (MainGameInstance && MainGameInstance->OrdersSubsystem && CurrentDelieringOrder.Id != CurrentDisplayingTakenOrderId) {
-		CurrentDisplayingTakenOrderId = CurrentDelieringOrder.Id;
-
-		RestaurantTitle->SetText(FText::FromString(CurrentDelieringOrder.Restaurant.Name));
-		DestinationTitle->SetText(FText::FromString(CurrentDelieringOrder.Destination.Name));
-		
-		TotalEarnings->SetText(FText::FromString(
-			CurrentDelieringOrder.CalculateEarnings()
-		));
-	}
-	else if (MainGameInstance && MainGameInstance->OrdersSubsystem && OrdersList && MainGameInstance->OrdersSubsystem->GetCurrentOrdersLength() != OrdersList->GetNumItems())
-	{
-		OrdersList->ClearListItems();
-		const TArray<FOrder>& CurrentOrders = MainGameInstance->OrdersSubsystem->GetCurrentOrders();
-		
-		for (const FOrder& Order : CurrentOrders)
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString("Order #") + FString::FormatAsNumber(Order.Id) + FString(" created"));
-
-			URestaurantPassObject* PassObject = NewObject<URestaurantPassObject>(this);
-			PassObject->Order = Order;
-			PassObject->OrdersScreenObject = this;
-			PassObject->OnOrderTaken = &UOrdersScreen::OnOrderTaken;
-			PassObject->OnGoToDetails = &UOrdersScreen::OnGoToDetails;
-
-			OrdersList->AddItem(PassObject);
-		}
-
-	}
 }
 
 void UOrdersScreen::OnOrderTaken(int Id) {
@@ -92,4 +70,15 @@ void UOrdersScreen::OnGoToDetails(URestaurantPassObject* SelectedOrder) {
 	}
 	
 	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString("Go to details of order #") + FString::FormatAsNumber(SelectedOrder->Order.Id));
+}
+
+void UOrdersScreen::OnAddOrderToList(FOrder NewOrder)
+{
+	URestaurantPassObject* PassObject = NewObject<URestaurantPassObject>(this);
+	PassObject->Order = NewOrder;
+	PassObject->OrdersScreenObject = this;
+	PassObject->OnOrderTaken = &UOrdersScreen::OnOrderTaken;
+	PassObject->OnGoToDetails = &UOrdersScreen::OnGoToDetails;
+
+	OrdersList->AddItem(PassObject);
 }

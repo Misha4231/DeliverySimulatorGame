@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "../SaveGameSlots/SG_OrdersSlot.h"
+#include "Delegates/DelegateCombinations.h"
 #include "OrdersSubsystem.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewOrderDelegate, FOrder, NewOrder);
 
 /**
  * 
@@ -22,10 +25,7 @@ public:
 	const TArray<FProduct>& GetProducts() const;
 
 	UFUNCTION(BlueprintCallable, Category = "OrderData")
-	const TArray<FOrder>& GetCurrentOrders() const;
-
-	UFUNCTION(BlueprintCallable, Category = "OrderData")
-	const int GetCurrentOrdersLength() const;
+	TArray<FOrder>& GetCurrentOrders();
 
 public:
 
@@ -39,24 +39,21 @@ private:
 	UPROPERTY()
 	TArray<FProduct> Products;
 
-	UPROPERTY()
-	TArray<FOrder> Orders;
-
 public:
 	UFUNCTION(BlueprintCallable)
 	FOrder SetCurrentOrder(int Id);
 
 	UFUNCTION(BlueprintCallable)
-	void CurrentOrderDone();
-
-	UFUNCTION(BlueprintCallable)
-	void CancelCurrentOrder();
+	void SetCurrentOrderState(OrderState NewState);
 
 	UFUNCTION(BlueprintCallable)
 	FOrder& GetCurrentOrder();
 
 	UFUNCTION(BlueprintCallable)
 	void AddOrder();
+
+	UPROPERTY(BlueprintAssignable)
+	FNewOrderDelegate NewOrderDispatcher;
 
 public:
 	UFUNCTION(BlueprintCallable)

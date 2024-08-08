@@ -25,7 +25,7 @@ void UOrderDetailsScreen::NativeConstruct()
     }
     
     Earnings->SetText(FText::FromString(
-		OrderData->Order.CalculateEarnings() + "$"
+		OrderData->Order.CalculateEarningsString() + "$"
 	));
 
     TakeOrderButton->OnClicked.AddDynamic(this, &UOrderDetailsScreen::TakeOrderButtonClicked);

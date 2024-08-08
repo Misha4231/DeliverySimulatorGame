@@ -23,8 +23,10 @@ void ARestaurantCheckpoint::OnCollisionEnter(UPrimitiveComponent* OverlappedComp
 	if (GameInstance && GameInstance->OrdersSubsystem) {
 		FOrder &CurrentOrder = GameInstance->OrdersSubsystem->GetCurrentOrder();
 
-		if (CurrentOrder.Restaurant.Id == Id) {
+		if (CurrentOrder.Restaurant.Id == Id && CurrentOrder.State == OrderState::OrderTaken) {
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Products are taken");
+
+			GameInstance->OrdersSubsystem->SetCurrentOrderState(OrderState::PoductsTaken);
 		}
 	}
 
@@ -37,5 +39,5 @@ void ARestaurantCheckpoint::OnCollisionExit(UPrimitiveComponent* OverlappedComp,
 	Super::OnCollisionExit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
 
 	
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, "Exit Restaurant checkpoint");
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, "Exit Restaurant checkpoint");
 }

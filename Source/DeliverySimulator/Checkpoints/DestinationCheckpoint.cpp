@@ -18,8 +18,11 @@ void ADestinationCheckpoint::OnCollisionEnter(UPrimitiveComponent* OverlappedCom
 	if (GameInstance && GameInstance->OrdersSubsystem) {
 		FOrder &CurrentOrder = GameInstance->OrdersSubsystem->GetCurrentOrder();
 
-		if (CurrentOrder.Destination.Id == Id) {
+		if (CurrentOrder.Destination.Id == Id && CurrentOrder.State == OrderState::PoductsTaken) {
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Products are delivered, Congratulations!");
+
+			GameInstance->StatsSubsystem->GiveMoney(CurrentOrder.CalculateEarningsFloat());
+			GameInstance->OrdersSubsystem->SetCurrentOrderState(OrderState::NotTaken);
 		}
 	}
 

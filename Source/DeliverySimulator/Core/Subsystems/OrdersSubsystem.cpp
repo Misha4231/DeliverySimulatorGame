@@ -31,29 +31,12 @@ const TArray<FProduct>& UOrdersSubsystem::GetProducts() const
 	return Products;
 }
 
-const TArray<FOrder>& UOrdersSubsystem::GetCurrentOrders() const
-{
-	return Orders;
-}
-
-const int UOrdersSubsystem::GetCurrentOrdersLength() const
-{
-	return Orders.Num();
-}
-
-void UOrdersSubsystem::CurrentOrderDone()
+TArray<FOrder>& UOrdersSubsystem::GetCurrentOrders()
 {
 	LoadOrdersSlotData();
-	OrdersSave->CancelCurrentOrderDelivering();
-
-	// Give Money on balance
+	return OrdersSave->CurrentOrders;
 }
 
-void UOrdersSubsystem::CancelCurrentOrder()
-{
-	LoadOrdersSlotData();
-	OrdersSave->CancelCurrentOrderDelivering();
-}
 
 FOrder& UOrdersSubsystem::GetCurrentOrder()
 {
@@ -72,15 +55,26 @@ FOrder UOrdersSubsystem::SetCurrentOrder(int Id)
 	return Order;
 }
 
+void UOrdersSubsystem::SetCurrentOrderState(OrderState NewState)
+{
+	LoadOrdersSlotData();
+	
+	if (NewState == OrderState::NotTaken) {
+		OrdersSave->RemoveOrder(OrdersSave->CurrentOrderDelivering);
+		OrdersSave->CurrentOrderDelivering = FOrder();
+		
+	} else {
+		OrdersSave->CurrentOrderDelivering.State = NewState;
+	}
+
+	SaveOrdersSlotData();
+}
+
 void UOrdersSubsystem::LoadOrdersSlotData()
 {
 	if(UGameplayStatics::DoesSaveGameExist(OrdersSaveSlotName, 0))
 	{
 		OrdersSave = Cast<USG_OrdersSlot>(UGameplayStatics::LoadGameFromSlot(OrdersSaveSlotName, 0));
-		if (OrdersSave)
-		{
-			Orders = OrdersSave->CurrentOrders;
-		}
 	} else
 	{
 		OrdersSave = Cast<USG_OrdersSlot>(UGameplayStatics::CreateSaveGameObject(USG_OrdersSlot::StaticClass()));
@@ -93,6 +87,7 @@ void UOrdersSubsystem::SaveOrdersSlotData()
 	if(UGameplayStatics::DoesSaveGameExist(OrdersSaveSlotName, 0))
 	{
 		UGameplayStatics::SaveGameToSlot(OrdersSave, OrdersSaveSlotName, 0);
+		
 	} else
 	{
 		OrdersSave = Cast<USG_OrdersSlot>(UGameplayStatics::CreateSaveGameObject(USG_OrdersSlot::StaticClass()));
@@ -102,7 +97,12 @@ void UOrdersSubsystem::SaveOrdersSlotData()
 
 void UOrdersSubsystem::AddOrder()
 {
-	OrdersSave->AddOrder(Restaurants, Products, Destinations);
-	SaveOrdersSlotData();
-	LoadOrdersSlotData();
+	FOrder NewOrder = OrdersSave->AddOrder(Restaurants, Products, Destinations);
+
+	if (NewOrder.Id != 0) {
+		SaveOrdersSlotData();
+		LoadOrdersSlotData();
+
+		NewOrderDispatcher.Broadcast(NewOrder);
+	}
 }

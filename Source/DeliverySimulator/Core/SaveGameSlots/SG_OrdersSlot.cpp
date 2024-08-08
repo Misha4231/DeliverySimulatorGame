@@ -3,11 +3,11 @@
 
 #include "SG_OrdersSlot.h"
 
-bool USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<FProduct>& AvailableProducts, TArray<FDestination>& AvailableDestinations)
+FOrder USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<FProduct>& AvailableProducts, TArray<FDestination>& AvailableDestinations)
 {
-	if (CurrentOrders.Num() >= 10) return false;
-
 	FOrder NewOrder = FOrder();
+	if (CurrentOrders.Num() >= 10) return NewOrder;
+
 	NewOrder.State = OrderState::NotTaken;
 
 	if (CurrentOrders.Num() > 0) NewOrder.Id = CurrentOrders.Last().Id + 1;
@@ -43,15 +43,24 @@ bool USG_OrdersSlot::AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<
 	}
 
 	CurrentOrders.Add(NewOrder);
-	
-	return true;
+	return NewOrder;
+}
+
+void USG_OrdersSlot::RemoveOrder(FOrder& Order)
+{
+	for (int i = 0; i < CurrentOrders.Num(); i++) {
+		if (CurrentOrders[i].Id == Order.Id) {
+			CurrentOrders.RemoveAt(i);
+			return;
+		}
+	}
 }
 
 FOrder USG_OrdersSlot::SetCurrentOrderDelivering(int Id) {
 	for (auto Order : CurrentOrders) {
 		if (Order.Id == Id) {
 			CurrentOrderDelivering = Order;
-			CurrentOrderDelivering.State = OrderState::Taken;
+			CurrentOrderDelivering.State = OrderState::OrderTaken;
 			
 			break;
 		}
@@ -64,7 +73,7 @@ void USG_OrdersSlot::CancelCurrentOrderDelivering() {
 	CurrentOrderDelivering = FOrder();
 }
 
-FString FOrder::CalculateEarnings()
+float FOrder::CalculateEarningsFloat()
 {
     float OrderCost = 0;
 	for (const FOrderProduct& Product : this->ProductList)
@@ -74,5 +83,12 @@ FString FOrder::CalculateEarnings()
 
 	float ClearEarnings = (this->PercentFee * OrderCost) / 100.f;
 
-	return FString::SanitizeFloat(round(ClearEarnings * 100.f) / 100.f);
+	//return FString::SanitizeFloat(round(ClearEarnings * 100.f) / 100.f);
+	return (round(ClearEarnings * 100.f) / 100.f);
+}
+FString FOrder::CalculateEarningsString()
+{
+	float ClearEarnings = CalculateEarningsFloat();
+
+	return FString::SanitizeFloat(ClearEarnings);
 }

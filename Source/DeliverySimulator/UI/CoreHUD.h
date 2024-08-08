@@ -7,6 +7,8 @@
 #include "Components/Overlay.h"
 #include "Components/SizeBox.h"
 #include "Phone/PhoneCore.h"
+#include "Stats/StatsPanel.h"
+#include "Components/GridPanel.h"
 #include "Kismet/GameplayStatics.h"
 #include "CoreHUD.generated.h"
 
@@ -19,10 +21,13 @@ class DELIVERYSIMULATOR_API UCoreHUD : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
+
+public:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	USizeBox* OverlayPhonePosition;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Phone")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Phone")
 	UPhoneCore* PhoneWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Phone")
@@ -33,4 +38,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Phone")
 	void HidePhone();
+
+public:
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	USizeBox* StatsWrapper;
+
+	UPROPERTY(EditAnywhere, Category="Stats", meta=(BindWidget))
+	UStatsPanel *StatsWidget;
 };

@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-// #include "DeliverySimulator/Core/SaveGameSlots/SG_OrdersSlot.h"
-// #include "DeliverySimulator/Checkpoints/DestinationCheckpoint.h"
-// #include "DeliverySimulator/Checkpoints/RestaurantCheckpoint.h"
+#include "Subsystems/StatsSubsystem.h"
 #include "Subsystems/OrdersSubsystem.h"
 #include "MainGameInstance.generated.h"
 
@@ -27,4 +25,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orders")
 	UDataTable* ProductsDataTable;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Stats")
+	UStatsSubsystem* StatsSubsystem;
 };

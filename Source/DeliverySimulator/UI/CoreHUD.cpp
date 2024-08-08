@@ -3,6 +3,11 @@
 
 #include "CoreHUD.h"
 
+void UCoreHUD::NativeConstruct()
+{
+	
+}
+
 void UCoreHUD::GetInPhone()
 {
 	if (!PhoneWidget)

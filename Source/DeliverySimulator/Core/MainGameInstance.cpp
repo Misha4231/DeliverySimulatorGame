@@ -11,6 +11,9 @@ void UMainGameInstance::Init()
 
 	OrdersSubsystem = NewObject<UOrdersSubsystem>(UOrdersSubsystem::StaticClass());
 	OrdersSubsystem->InitializeSubsystem(ProductsDataTable, GetTimerManager());
-	
+
+	StatsSubsystem = NewObject<UStatsSubsystem>(UStatsSubsystem::StaticClass());
+	StatsSubsystem->InitializeSubsystem();
 }
 
+ 

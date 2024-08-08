@@ -71,7 +71,7 @@ UENUM()
 enum OrderState
 {
 	NotTaken UMETA(DisplayName = "Not Taken"),
-	Taken UMETA(DisplayName = "Taken"),
+	OrderTaken UMETA(DisplayName = "Taken"),
 	PoductsTaken UMETA(DisplayName = "Poducts Taken")
 };
 
@@ -98,7 +98,8 @@ struct FOrder
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<OrderState> State;
 
-	FString CalculateEarnings();
+	float CalculateEarningsFloat();
+	FString CalculateEarningsString();
 };
 
 /**
@@ -114,7 +115,10 @@ public:
 	TArray<FOrder> CurrentOrders;
 
 	UFUNCTION(BlueprintCallable)
-	bool AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<FProduct>& AvailableProducts, TArray<FDestination>& AvailableDestinations);
+	FOrder AddOrder(TArray<FRestaurant>& AvailableRestaurants, TArray<FProduct>& AvailableProducts, TArray<FDestination>& AvailableDestinations);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveOrder(FOrder& Order);
 
 	UPROPERTY(BlueprintReadWrite)
 	FOrder CurrentOrderDelivering;

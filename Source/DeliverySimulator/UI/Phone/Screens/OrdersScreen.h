@@ -72,4 +72,7 @@ public:
 
 private:
 	int CurrentDisplayingTakenOrderId;
+
+	UFUNCTION()
+	void OnAddOrderToList(FOrder NewOrder);
 };
