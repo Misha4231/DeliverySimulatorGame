@@ -15,9 +15,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "InputActionValue.h"
 #include "ThirdPersonCharacter.generated.h"
 
 class USpringArmComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class DELIVERYSIMULATOR_API AThirdPersonCharacter : public ACharacter
@@ -31,25 +34,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UFUNCTION(Category = "Input")
-	void LookRight(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void LookUp(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void MoveForward(const float Scale);
-	
-	UFUNCTION(Category = "Input")
-	void TurnLeft(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void MoveBack(const float Scale);
-
-	// action handled with F to enter transport
-	UFUNCTION(Category = "Input")
-	void GetOnBicycleAction();
 
 	// action handled with F to enter transport
 	UFUNCTION(Category = "Bicycle")
@@ -88,4 +72,24 @@ public:
 private:
 	UPROPERTY()
 	ABicycle* ClosestBicycle;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputMappingContext *CharacterMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction *MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction *LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction *JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction *GetInsideAction;
+
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue &Value);
+	void GetOnBicycleAction(const FInputActionValue &Value);
 };

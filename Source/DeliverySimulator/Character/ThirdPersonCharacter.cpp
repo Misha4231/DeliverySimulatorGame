@@ -2,7 +2,8 @@
 
 
 #include "ThirdPersonCharacter.h"
-
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "DeliverySimulator/Core/MainGameInstance.h"
 
 // Sets default values
@@ -23,6 +24,8 @@ void AThirdPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FRotator CameraRotation = Camera->GetComponentRotation();
+	Camera->SetWorldRotation(FRotator(CameraRotation.Pitch, CameraRotation.Yaw, 0.f));
 }
 
 // Called every frame
@@ -54,21 +57,44 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// Camera
-	PlayerInputComponent->BindAxis("LookRight", this, &AThirdPersonCharacter::LookRight);
-	PlayerInputComponent->BindAxis("LookUp", this, &AThirdPersonCharacter::LookUp);
+	if (APlayerController *PlayerController = Cast<APlayerController>(GetController())) {
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
+			Subsystem->AddMappingContext(CharacterMappingContext, 0);
+		}
+	}
+	
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Move);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Look);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AThirdPersonCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::StopJumping);
+		EnhancedInputComponent->BindAction(GetInsideAction, ETriggerEvent::Started, this, &AThirdPersonCharacter::GetOnBicycleAction);
+	}
+}
 
-	// Movement
-	PlayerInputComponent->BindAxis("MoveForward", this, &AThirdPersonCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("TurnLeft", this, &AThirdPersonCharacter::TurnLeft);
-	PlayerInputComponent->BindAxis("MoveBack", this, &AThirdPersonCharacter::MoveBack);
+void AThirdPersonCharacter::Move(const FInputActionValue &Value)
+{
+	const FVector2D CurrentValue = Value.Get<FVector2D>();
+	const FRotator Rotation = GetControlRotation();
 
-	// Jumping
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &AThirdPersonCharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &AThirdPersonCharacter::StopJumping);
+	AddMovementInput(
+		UKismetMathLibrary::GetForwardVector(FRotator(0.f, Rotation.Yaw, 0.f)),
+		CurrentValue.Y
+	);
+	AddMovementInput(
+		UKismetMathLibrary::GetRightVector(FRotator(0.f, Rotation.Yaw, Rotation.Roll)),
+		CurrentValue.X
+	);
+}
 
-	// Animations
-	PlayerInputComponent->BindAction("GetInside", IE_Pressed, this, &AThirdPersonCharacter::GetOnBicycleAction);
+void AThirdPersonCharacter::Look(const FInputActionValue &Value)
+{
+	const FVector2D CurrentValue = Value.Get<FVector2D>();
+
+	if (GetController()) {
+		AddControllerYawInput(CurrentValue.X);
+		AddControllerPitchInput(CurrentValue.Y);
+	}
 }
 
 void AThirdPersonCharacter::HandleEnterBicycleCollision(ABicycle* Bicycle)
@@ -81,34 +107,7 @@ void AThirdPersonCharacter::HandleExitBicycleCollision(ABicycle* Bicycle)
 	ClosestBicycle = nullptr;
 }
 
-void AThirdPersonCharacter::LookRight(const float Scale)
-{
-	AddControllerYawInput(Scale);
-}
-
-void AThirdPersonCharacter::LookUp(const float Scale)
-{
-	AddControllerPitchInput(Scale);
-	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::SanitizeFloat(Scale));
-}
-
-void AThirdPersonCharacter::MoveForward(const float Scale)
-{
-	const FRotator Rotation = GetControlRotation();
-	AddMovementInput(UKismetMathLibrary::GetForwardVector(FRotator(0, Rotation.Yaw, 0)), Scale);
-}
-void AThirdPersonCharacter::MoveBack(const float Scale)
-{
-	MoveForward(Scale);
-}
-
-void AThirdPersonCharacter::TurnLeft(const float Scale)
-{
-	const FRotator Rotation = GetControlRotation();
-	AddMovementInput(UKismetMathLibrary::GetRightVector(FRotator(0, Rotation.Yaw, Rotation.Roll)), Scale);
-}
-
-void AThirdPersonCharacter::GetOnBicycleAction()
+void AThirdPersonCharacter::GetOnBicycleAction(const FInputActionValue &Value)
 {
 	if (ClosestBicycle && ClosestBicycle->GetMesh())
 	{
@@ -174,10 +173,16 @@ void AThirdPersonCharacter::GetOnBicycle()
 	// change state to right to not mirror animation
 	WalkToBicycleState[1] = true;
 	
-	GetMesh()->SetVisibility(false);
-	ClosestBicycle->CharacterMesh->SetVisibility(true);
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(ClosestBicycle);
-	this->Destroy();
+	if (GetMesh())
+		GetMesh()->SetVisibility(false);
+		
+	if (ClosestBicycle && ClosestBicycle->CharacterMesh)
+		ClosestBicycle->CharacterMesh->SetVisibility(true);
+
+	if (ClosestBicycle) {
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(ClosestBicycle);
+		this->Destroy();
+	}
 }
 
 
