@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "DeliverySimulator/UI/CoreHUD.h"
 #include "GameFramework/PlayerController.h"
+#include "InputActionValue.h"
 #include "CorePlayerController.generated.h"
 
+class UInputMappingContext;
+class UInputAction;
 /**
  * 
  */
@@ -17,7 +20,6 @@ class DELIVERYSIMULATOR_API ACorePlayerController : public APlayerController
 
 public:
 	virtual void BeginPlay() override;
-
 	virtual void SetupInputComponent() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
@@ -26,12 +28,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	UCoreHUD* HUDWidget;
 
-	UFUNCTION(BlueprintCallable, Category="UI Phone")
-	void OnPhoneOpen();
-
-	UFUNCTION(BlueprintCallable, Category="UI Phone")
-	void OnPhoneClose();
-
+protected:
 	UPROPERTY(BlueprintReadOnly, Category="UI Phone")
 	bool bInPhone = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputMappingContext* ControllerInputContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* PhoneAction;
+
+	void OnPhoneAction(const FInputActionValue &Value);
 };

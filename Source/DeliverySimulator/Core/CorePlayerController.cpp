@@ -2,8 +2,10 @@
 
 
 #include "CorePlayerController.h"
-
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+
 
 void ACorePlayerController::BeginPlay()
 {
@@ -23,39 +25,38 @@ void ACorePlayerController::BeginPlay()
 void ACorePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
-	if (InputComponent)
-	{
-		InputComponent->BindAction("GetPhone", IE_Pressed, this, &ACorePlayerController::OnPhoneOpen);
-		InputComponent->BindAction("HidePhone", IE_Pressed, this, &ACorePlayerController::OnPhoneClose);
-	}
-}
-
-void ACorePlayerController::OnPhoneOpen()
-{
-	bInPhone = true;
 	
-	if (HUDWidget)
-	{
-		HUDWidget->GetInPhone();
-
-	} else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "HUD Widget not found");
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())) {
+        Subsystem->AddMappingContext(ControllerInputContext, 0);
+    }
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent)) {
+		EnhancedInputComponent->BindAction(PhoneAction, ETriggerEvent::Started, this, &ACorePlayerController::OnPhoneAction);
 	}
 }
 
-void ACorePlayerController::OnPhoneClose()
+void ACorePlayerController::OnPhoneAction(const FInputActionValue &Value)
 {
-	if (!bInPhone) return;
-	if (HUDWidget)
-	{
-		HUDWidget->HidePhone();
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
-	} else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "HUD Widget not found");
-	}
+	const float CurrentValue = Value.Get<float>();
 
-	bInPhone = false;
+	if (CurrentValue > 0) {
+		bInPhone = true;
+		if (HUDWidget)
+		{
+			HUDWidget->GetInPhone();
+		} else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "HUD Widget not found");
+		}
+	} else {
+		if (!bInPhone) return;
+		if (HUDWidget)
+		{
+			HUDWidget->HidePhone();
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
+		} else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f,FColor::Red, "HUD Widget not found");
+		}
+		bInPhone = false;
+	}
 }
