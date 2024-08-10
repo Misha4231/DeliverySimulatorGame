@@ -72,6 +72,15 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	}
 }
 
+void AThirdPersonCharacter::DestroyCharacterInput()
+{
+	if (APlayerController *PlayerController = Cast<APlayerController>(GetController())) {
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
+			Subsystem->RemoveMappingContext(CharacterMappingContext);
+		}
+	}
+}
+
 void AThirdPersonCharacter::Move(const FInputActionValue &Value)
 {
 	const FVector2D CurrentValue = Value.Get<FVector2D>();
@@ -180,10 +189,9 @@ void AThirdPersonCharacter::GetOnBicycle()
 		ClosestBicycle->CharacterMesh->SetVisibility(true);
 
 	if (ClosestBicycle) {
+		DestroyCharacterInput();
 		UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(ClosestBicycle);
 		this->Destroy();
 	}
 }
-
-
 

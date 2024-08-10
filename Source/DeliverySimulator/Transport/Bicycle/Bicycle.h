@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WheeledVehiclePawn.h"
+#include "../Vehicle.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -43,7 +43,7 @@ public:
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API ABicycle : public AWheeledVehiclePawn
+class DELIVERYSIMULATOR_API ABicycle : public AVehicle
 {
 	GENERATED_BODY()
 
@@ -52,40 +52,10 @@ public:
 	ABicycle();
 
 	virtual void BeginPlay() override;
-	
-	//  Camera
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
-	USpringArmComponent* CameraBoom;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
-	UCameraComponent* Camera;
-
-	UFUNCTION()
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(Category = "Input")
-	void LookRight(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void LookUp(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void MoveForward(const float Scale);
-	
-	UFUNCTION(Category = "Input")
-	void TurnLeft(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void MoveBack(const float Scale);
-
-	UFUNCTION(Category = "Input")
-	void StartHandBrake();
-
-	UFUNCTION(Category = "Input")
-	void StopHandBrake();
-
-	UFUNCTION(Category = "Input")
-	void GetOutOfBicycle();
+public:
+	void GetOut(const FInputActionValue &Value) override;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Interfaces")

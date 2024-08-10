@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AITypes.h"
 #include "Camera/CameraComponent.h"
-#include "DeliverySimulator/Transport/Bicycle.h"
+#include "DeliverySimulator/Transport/Bicycle/Bicycle.h"
 #include "GameFramework/Character.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "AIController.h"
@@ -48,13 +48,15 @@ private:
 	
 	FTimerHandle GetInTransportTimer;
 	
-public:	
+protected:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void DestroyCharacterInput();
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
 	USpringArmComponent* CameraBoom;
 

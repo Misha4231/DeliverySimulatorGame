@@ -3,7 +3,7 @@
 
 #include "Bicycle.h"
 #include "ChaosVehicleMovementComponent.h"
-#include "../Character/ThirdPersonCharacter.h"
+#include "../../Character/ThirdPersonCharacter.h"
 #include "EventManager.h"
 
 FBikePoints::FBikePoints(const FVector& InSeat, const FVector& InLeftHand, const FVector& InRightHand, 
@@ -15,12 +15,6 @@ FBikePoints::FBikePoints(const FVector& InSeat, const FVector& InLeftHand, const
 
 ABicycle::ABicycle()
 {
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->SetupAttachment(CameraBoom);
-
 	CharacterMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh"));
 	CharacterMesh->SetupAttachment(RootComponent);
 
@@ -41,63 +35,14 @@ void ABicycle::BeginPlay()
 void ABicycle::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	// Camera
-	PlayerInputComponent->BindAxis("LookRight", this, &ABicycle::LookRight);
-	PlayerInputComponent->BindAxis("LookUp", this, &ABicycle::LookUp);
-
-	// Movement
-	PlayerInputComponent->BindAxis("MoveForward", this, &ABicycle::MoveForward);
-	PlayerInputComponent->BindAxis("TurnLeft", this, &ABicycle::TurnLeft);
-	PlayerInputComponent->BindAxis("MoveBack", this, &ABicycle::MoveBack);
-
-	// Break
-	PlayerInputComponent->BindAction("HandBrake", EInputEvent::IE_Pressed, this, &ABicycle::StartHandBrake);
-	PlayerInputComponent->BindAction("HandBrake", EInputEvent::IE_Released, this, &ABicycle::StopHandBrake);
-
-	// Exit
-	PlayerInputComponent->BindAction("GetInside", IE_Pressed, this, &ABicycle::GetOutOfBicycle);
 }
 
-void ABicycle::LookRight(const float Scale)
-{
-	AddControllerYawInput(Scale);
-}
 
-void ABicycle::LookUp(const float Scale)
-{
-	AddControllerPitchInput(Scale);
-}
-
-void ABicycle::MoveForward(const float Scale)
-{
-	GetVehicleMovementComponent()->SetThrottleInput(Scale);
-}
-
-void ABicycle::TurnLeft(const float Scale)
-{
-	GetVehicleMovementComponent()->SetSteeringInput(Scale);
-}
-
-void ABicycle::MoveBack(const float Scale)
-{
-	GetVehicleMovementComponent()->SetBrakeInput(-Scale);
-}
-
-void ABicycle::StartHandBrake()
-{
-	GetVehicleMovementComponent()->SetHandbrakeInput(true);
-}
-void ABicycle::StopHandBrake()
-{
-	GetVehicleMovementComponent()->SetHandbrakeInput(false);
-}
-
-void ABicycle::GetOutOfBicycle()
+void ABicycle::GetOut(const FInputActionValue &Value)
 {
 	if (!GetOutOfBicycleMontage) return;
+
 	
-	StartHandBrake();
 	const bool bRightBody = SideRayCast(GetMesh()->GetRightVector());
 	const bool bLeftBody = SideRayCast(-GetMesh()->GetRightVector());
 
@@ -124,7 +69,7 @@ void ABicycle::GetOutOfBicycle()
 			APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 			PlayerController->SetViewTargetWithBlend(Character, 2.f);
 
-
+			HandBrake(true);
 			AnimInstance->Montage_Play(GetOutOfBicycleMontage);
 			GetWorldTimerManager().SetTimer(GetOutOfBicycleHandle, [this, Character]()
 			{
@@ -224,11 +169,13 @@ bool ABicycle::SideRayCast(const FVector& Direction) const
 
 void ABicycle::PossessCharacter(AThirdPersonCharacter* Character)
 {
+	HandBrake(false);
 	CharacterMesh->SetVisibility(false);
 	Character->GetMesh()->SetVisibility(true);
 	
 	if (Character)
 	{
+		DestroyVehicleInput();
 		GetController()->Possess(Character);
 	}
 }
