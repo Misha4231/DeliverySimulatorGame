@@ -3,14 +3,15 @@
 
 #include "PhoneCore.h"
 #include "DeliverySimulator/UI/CoreHUD.h"
-#include "Screens/ScreensRouting.h"
 
 void UPhoneCore::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	
+	ScreenChangeDelegate.BindUObject(this, &UPhoneCore::ChangeScreen);
+	ChangeToCreatedScreenDelegate.BindUObject(this, &UPhoneCore::ChangeToCreatedScreen);
 	ChangeScreen(MenuScreenClass);
+
 
 	BackButton->OnClicked.AddDynamic(this, &UPhoneCore::GoBackScreen);
 	
@@ -39,16 +40,12 @@ void UPhoneCore::OnHidePhone()
 }
 
 
-void UPhoneCore::ChangeScreen(TSubclassOf<UUserWidget> NewScreenClass)
+void UPhoneCore::ChangeScreen(TSubclassOf<UPhoneScreen> NewScreenClass)
 {
-	// if (ScreensStack.Num() > 1) {
-	// 	GEngine->AddOnScreenDebugMessage(-1,10.f,FColor::Blue, NewScreenClass.Get()->GetName() + FString(" - ") + FString(ScreensStack.Last()->GetClass()->GetName()));
-	// }
-	
 	if (ScreensStack.Num() > 1 && NewScreenClass.Get()->GetName() == ScreensStack.Last()->GetClass()->GetName())
 		return;
 	
-	for (UUserWidget* Screen : ScreensStack) {
+	for (UPhoneScreen* Screen : ScreensStack) {
 		if (NewScreenClass.Get()->GetName() == Screen->GetClass()->GetName()) {
 			while (ScreensStack.Num() > 1 && NewScreenClass.Get()->GetName() != ScreensStack.Last()->GetClass()->GetName()) {
 				ScreensStack.Pop();
@@ -59,24 +56,21 @@ void UPhoneCore::ChangeScreen(TSubclassOf<UUserWidget> NewScreenClass)
 		}
 	}
 
-	if (UUserWidget* NewScreen = CreateWidget<UUserWidget>(this, NewScreenClass))
+	if (UPhoneScreen* NewScreen = CreateWidget<UPhoneScreen>(this, NewScreenClass))
 	{
+		NewScreen->SetScreenChangeDelegate(&ScreenChangeDelegate, &ChangeToCreatedScreenDelegate);
+		
 		ScreensStack.Push(NewScreen);
 		ShowCurrentTopScreen();
-
-		if (IScreenRoutingInterface* RoutingInterface = Cast<IScreenRoutingInterface>(ScreensStack.Last()))
-		{
-			RoutingInterface->SetScreenChangeDelegate(FScreenChangeDelegate::CreateUObject(this, &UPhoneCore::ChangeScreen), FChangeToCreatedScreenDelegate::CreateUObject(this, &UPhoneCore::ChangeToCreatedScreen));
-		}
 	}
 }
-void UPhoneCore::ChangeToCreatedScreen(UUserWidget* NewScreen) {
+void UPhoneCore::ChangeToCreatedScreen(UPhoneScreen* NewScreen) {
 	if (!NewScreen || 
 		(ScreensStack.Num() > 1 && NewScreen->GetClass()->GetName() == ScreensStack.Last()->GetClass()->GetName())) {
 		return;
 	}
 
-	for (UUserWidget* Screen : ScreensStack) {
+	for (UPhoneScreen* Screen : ScreensStack) {
 		if (NewScreen->GetClass()->GetName() == Screen->GetClass()->GetName()) {
 			while (ScreensStack.Num() > 1 && NewScreen->GetClass()->GetName() != Screen->GetClass()->GetName()) {
 				ScreensStack.Pop();
@@ -90,16 +84,14 @@ void UPhoneCore::ChangeToCreatedScreen(UUserWidget* NewScreen) {
 	ScreensStack.Push(NewScreen);
 	ShowCurrentTopScreen();
 
-	if (IScreenRoutingInterface* RoutingInterface = Cast<IScreenRoutingInterface>(ScreensStack.Last()))
-	{
-		RoutingInterface->SetScreenChangeDelegate(FScreenChangeDelegate::CreateUObject(this, &UPhoneCore::ChangeScreen), FChangeToCreatedScreenDelegate::CreateUObject(this, &UPhoneCore::ChangeToCreatedScreen));
-	}
+	NewScreen->SetScreenChangeDelegate(&ScreenChangeDelegate, &ChangeToCreatedScreenDelegate);
 }
 
 void UPhoneCore::ShowCurrentTopScreen() {
 	if (ScreensStack.Num() >= 1) {
 		ScreensWrapper->ClearChildren();
 		ScreensWrapper->AddChild(ScreensStack.Last());
+		ScreensStack.Last()->ScreenConstruct();
 	}
 
 	UpdateBackground();

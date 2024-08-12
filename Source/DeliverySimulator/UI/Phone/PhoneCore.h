@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetSwitcher.h"
+#include "./Screens/Base/PhoneScreen.h"
 #include "PhoneCore.generated.h"
 
 class UCoreHUD;
@@ -57,16 +58,16 @@ public:
 	UCoreHUD* HUD;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UUserWidget> MenuScreenClass;
+	TSubclassOf<UPhoneScreen> MenuScreenClass;
 
 	UPROPERTY(BlueprintReadOnly)
-	TArray<UUserWidget*> ScreensStack;
+	TArray<UPhoneScreen*> ScreensStack;
 	
 	UFUNCTION(BlueprintCallable)
-	void ChangeScreen(TSubclassOf<UUserWidget> NewScreenClass);
+	void ChangeScreen(TSubclassOf<UPhoneScreen> NewScreenClass);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeToCreatedScreen(UUserWidget* NewScreen);
+	void ChangeToCreatedScreen(UPhoneScreen* NewScreen);
 
 	void UpdateBackground();
 	void ShowCurrentTopScreen();
@@ -76,4 +77,8 @@ public:
 
 	UFUNCTION()
 	void GoBackScreen();
+
+private:
+	FScreenChangeDelegate ScreenChangeDelegate;
+	FChangeToCreatedScreenDelegate ChangeToCreatedScreenDelegate;
 };

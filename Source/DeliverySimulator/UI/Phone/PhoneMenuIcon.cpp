@@ -10,7 +10,7 @@ void UPhoneMenuIcon::NativeConstruct()
 	SetIconTexture(InitialIconTexture);
 	SetTitle(InitialIconTitle);
 	
-	IconButton->OnClicked.AddDynamic(this, &UPhoneMenuIcon::OnButtonClicked);
+	IconButton->OnClicked.AddUniqueDynamic(this, &UPhoneMenuIcon::OnButtonClicked);
 }
 
 void UPhoneMenuIcon::NativePreConstruct()
@@ -23,8 +23,9 @@ void UPhoneMenuIcon::NativePreConstruct()
 
 void UPhoneMenuIcon::OnButtonClicked()
 {
-	if (MenuScreenObject && OnChangeScreen)
-		(*MenuScreenObject.*OnChangeScreen)(IconScreen);
+	if (ScreenChangeDelegate && ScreenChangeDelegate->IsBound()) {
+		ScreenChangeDelegate->Execute(IconScreen);
+	}
 }
 
 void UPhoneMenuIcon::SetIconTexture(UTexture2D* IconTexture) const

@@ -2,14 +2,14 @@
 
 
 #include "OrdersListEntry.h"
-
 #include "ProductPassObject.h"
+#include "../Screens/Orders/OrderDetailsScreen.h"
 
 void UOrdersListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
 	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
 
-	OrderData = Cast<URestaurantPassObject>(ListItemObject);
+	OrderData = Cast<UOrderPassObject>(ListItemObject);
 
 	if (OrderData)
 	{
@@ -32,7 +32,11 @@ void UOrdersListEntry::NativeConstruct()
 
 void UOrdersListEntry::GoToDetails()
 {
-	if (OrderData && OrderData->OrdersScreenObject) {
-		(*OrderData->OrdersScreenObject.*OrderData->OnGoToDetails)(OrderData);
+	if (UOrderDetailsScreen *OrderDetailsScreenWidget = Cast<UOrderDetailsScreen>(CreateWidget<UUserWidget>(this, OrderDetailsScreenClass))) {
+		OrderDetailsScreenWidget->SetOrderData(OrderData);
+
+		if (OrderData->ChangeToCreatedScreenDelegate->IsBound()) {
+			OrderData->ChangeToCreatedScreenDelegate->Execute(OrderDetailsScreenWidget);
+		}
 	}
 }

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ScreensRouting.h"
+#include "../Base/PhoneScreen.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
@@ -11,25 +11,19 @@
 #include "Components/Border.h"
 #include "Components/GridPanel.h"
 #include "DeliverySimulator/Core/MainGameInstance.h"
+#include "../../Components/OrderPassObject.h"
 #include "OrdersScreen.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API UOrdersScreen : public UUserWidget, public IScreenRoutingInterface
+class DELIVERYSIMULATOR_API UOrdersScreen : public UPhoneScreen
 {
 	GENERATED_BODY()
 
 public:
-	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate);
-protected:
-	FScreenChangeDelegate ScreenChangeDelegate;
-	FChangeToCreatedScreenDelegate ChangeToCreatedScreenDelegate;
-
-public:
-	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void ScreenConstruct() override;
 	
 	UPROPERTY(meta=(BindWidget))
 	UListView* OrdersList;
@@ -45,12 +39,6 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> OrdersScreenClass;
-
-	UFUNCTION()
-	void OnOrderTaken(int Id);
-
-	UFUNCTION()
-	void OnGoToDetails(URestaurantPassObject* SelectedOrder);
 
 	UPROPERTY(meta=(BindWidget))
 	UGridPanel *CurrentOrderWrapper;

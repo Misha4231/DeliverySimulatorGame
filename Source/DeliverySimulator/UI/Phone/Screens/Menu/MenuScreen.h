@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ScreensRouting.h"
+#include "../Base/PhoneScreen.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/GridPanel.h"
 #include "DeliverySimulator/UI/Phone/PhoneMenuIcon.h"
@@ -13,19 +13,11 @@
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API UMenuScreen : public UUserWidget, public IScreenRoutingInterface
+class DELIVERYSIMULATOR_API UMenuScreen : public UPhoneScreen
 {
 	GENERATED_BODY()
 
 public:
-	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate);
-protected:
-	FScreenChangeDelegate ScreenChangeDelegate;
-
-public:
-	virtual void NativeConstruct() override;
-	virtual void NativePreConstruct() override;
-	
 	UPROPERTY(meta=(BindWidget))
 	UGridPanel* MenuIcons;
 
@@ -35,5 +27,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CacheButtons();
 
-	void ChangeScreen(TSubclassOf<UUserWidget> NewScreen);
+public:
+	virtual void ScreenConstruct() override;
 };

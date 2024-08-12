@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ScreensRouting.h"
+#include "../Base/PhoneScreen.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
-#include "DeliverySimulator/UI/Phone/Components/RestaurantPassObject.h"
+#include "DeliverySimulator/UI/Phone/Components/OrderPassObject.h"
 #include "DeliverySimulator/UI/Phone/Components/ProductPassObject.h"
 #include "OrderDetailsScreen.generated.h"
 
@@ -16,18 +16,15 @@
  * 
  */
 UCLASS()
-class DELIVERYSIMULATOR_API UOrderDetailsScreen : public UUserWidget, public IScreenRoutingInterface
+class DELIVERYSIMULATOR_API UOrderDetailsScreen : public UPhoneScreen
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate);
-
-public:
-	virtual void NativeConstruct() override;
+	virtual void ScreenConstruct() override;
 
 private:
-	URestaurantPassObject* OrderData;
+	UOrderPassObject* OrderData;
 
 public:
 	UPROPERTY(meta=(BindWidget))
@@ -52,7 +49,7 @@ public:
 	UTextBlock* Earnings;
 
 	UFUNCTION()
-	void SetOrderData(URestaurantPassObject* InOrderData);
+	void SetOrderData(UOrderPassObject* InOrderData);
 
 	UFUNCTION()
 	void TakeOrderButtonClicked();

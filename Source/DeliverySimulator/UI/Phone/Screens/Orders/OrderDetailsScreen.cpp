@@ -2,12 +2,9 @@
 
 
 #include "OrderDetailsScreen.h"
+#include <DeliverySimulator/Core/MainGameInstance.h>
 
-void UOrderDetailsScreen::SetScreenChangeDelegate(FScreenChangeDelegate InScreenChangeDelegate, FChangeToCreatedScreenDelegate InChangeToCreatedScreenDelegate)
-{
-}
-
-void UOrderDetailsScreen::NativeConstruct()
+void UOrderDetailsScreen::ScreenConstruct()
 {
     Restaurant->SetText(FText::FromString(OrderData->Order.Restaurant.Name));
     Destination->SetText(FText::FromString(OrderData->Order.Destination.Name));
@@ -28,15 +25,19 @@ void UOrderDetailsScreen::NativeConstruct()
 		OrderData->Order.CalculateEarningsString() + "$"
 	));
 
-    TakeOrderButton->OnClicked.AddDynamic(this, &UOrderDetailsScreen::TakeOrderButtonClicked);
+    TakeOrderButton->OnClicked.AddUniqueDynamic(this, &UOrderDetailsScreen::TakeOrderButtonClicked);
 }
 
-void UOrderDetailsScreen::SetOrderData(URestaurantPassObject* InOrderData)
+
+void UOrderDetailsScreen::SetOrderData(UOrderPassObject* InOrderData)
 {
     OrderData = InOrderData;
 }
 
 void UOrderDetailsScreen::TakeOrderButtonClicked() {
-    if (OrderData->OrdersScreenObject && OrderData->OnOrderTaken)
-        (*OrderData->OrdersScreenObject.*OrderData->OnOrderTaken)(OrderData->Order.Id);
+    if (UMainGameInstance *GameInstance = Cast<UMainGameInstance>(GetGameInstance())) {
+        GameInstance->OrdersSubsystem->SetCurrentOrder(OrderData->Order.Id);
+
+        TakeOrderButton->SetIsEnabled(false);
+    }
 }

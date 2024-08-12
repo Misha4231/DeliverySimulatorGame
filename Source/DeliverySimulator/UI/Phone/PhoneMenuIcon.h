@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "./Screens/Base/PhoneScreen.h"
 #include "PhoneMenuIcon.generated.h"
 
 class UMenuScreen;
@@ -46,13 +47,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTitle(const FText& NewTitle) const;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//int WidgetSwitcherIndex;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UUserWidget> IconScreen;
+	TSubclassOf<UPhoneScreen> IconScreen;
 
-	UPROPERTY()
-	UMenuScreen* MenuScreenObject;
-	void (UMenuScreen::*OnChangeScreen)(TSubclassOf<UUserWidget>);
+	FScreenChangeDelegate* ScreenChangeDelegate;
 };

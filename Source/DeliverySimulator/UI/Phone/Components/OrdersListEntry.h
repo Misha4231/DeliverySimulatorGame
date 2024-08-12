@@ -9,7 +9,8 @@
 #include "Components/Image.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
-#include "RestaurantPassObject.h"
+#include "OrderPassObject.h"
+#include "../Screens/Base/PhoneScreen.h"
 #include "OrdersListEntry.generated.h"
 
 /**
@@ -25,7 +26,7 @@ public:
 	virtual void NativeConstruct() override;
 	
 	UPROPERTY(BlueprintReadWrite)
-	URestaurantPassObject* OrderData;
+	UOrderPassObject* OrderData;
 	
 	UPROPERTY(meta=(BindWidget))
 	UButton* GoToDetailsButton;
@@ -41,4 +42,7 @@ public:
 
 	UFUNCTION()
 	void GoToDetails();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UPhoneScreen> OrderDetailsScreenClass;
 };
