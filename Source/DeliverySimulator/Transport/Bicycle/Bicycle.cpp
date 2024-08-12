@@ -79,12 +79,6 @@ void ABicycle::GetOut(const FInputActionValue &Value)
 	}
 }
 
-float ABicycle::GetAcceleration() const
-{
-	if (InputComponent)
-		return InputComponent->GetAxisValue("MoveForward") + (InputComponent->GetAxisValue("MoveBack"));
-	return 0;
-}
 
 FBikePoints ABicycle::GetBikePoints() const
 {

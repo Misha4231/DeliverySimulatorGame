@@ -58,9 +58,6 @@ public:
 	void GetOut(const FInputActionValue &Value) override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Interfaces")
-	float GetAcceleration() const;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Cyclist")
 	USkeletalMeshComponent* CharacterMesh;
 

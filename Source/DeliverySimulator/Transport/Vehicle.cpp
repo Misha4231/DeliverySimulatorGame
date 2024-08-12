@@ -33,6 +33,8 @@ void AVehicle::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent) 
         EnhancedInputComponent->BindAction(HandBrakeAction, ETriggerEvent::Started, this, &AVehicle::HandBrake);
         EnhancedInputComponent->BindAction(HandBrakeAction, ETriggerEvent::Completed, this, &AVehicle::HandBrake);
         EnhancedInputComponent->BindAction(GetOutAction, ETriggerEvent::Started, this, &AVehicle::GetOut);
+
+        RideActionBinding = &EnhancedInputComponent->BindActionValue(MoveAction);
     }
 }
 void AVehicle::DestroyVehicleInput()
@@ -69,7 +71,11 @@ void AVehicle::HandBrake(const FInputActionValue& Value)
     GetVehicleMovementComponent()->SetHandbrakeInput(CurrentValue);
 }
 
-void AVehicle::GetOut(const FInputActionValue &Value)
+float AVehicle::GetYRideAxis() const
 {
-    
+    if (RideActionBinding) {
+        const FVector2D RideValue = RideActionBinding->GetValue().Get<FVector2D>();
+        return RideValue.Y;
+    }
+    return 0.f;
 }

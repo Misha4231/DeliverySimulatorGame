@@ -54,5 +54,11 @@ protected:
 	void Ride(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void HandBrake(const FInputActionValue& Value);
-	void virtual GetOut(const FInputActionValue &Value);
+	void virtual GetOut(const FInputActionValue &Value){};
+
+public:
+	UFUNCTION(BlueprintCallable)
+	float GetYRideAxis() const;
+private:
+	struct FEnhancedInputActionValueBinding* RideActionBinding;
 };
