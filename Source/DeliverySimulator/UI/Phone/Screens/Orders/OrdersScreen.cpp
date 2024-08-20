@@ -8,7 +8,6 @@
 void UOrdersScreen::ScreenConstruct()
 {
 	MainGameInstance = Cast<UMainGameInstance>(GetGameInstance());
-	UE_LOG(LogTemp, Warning, TEXT("Orders list construct"));
 	
 	FOrder &CurrentDelieringOrder = MainGameInstance->OrdersSubsystem->GetCurrentOrder();
 	if (MainGameInstance && MainGameInstance->OrdersSubsystem) {

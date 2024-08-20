@@ -10,8 +10,10 @@
 #include "Components/Button.h"
 #include "Components/Border.h"
 #include "Components/GridPanel.h"
+#include "Components/CanvasPanel.h"
 #include "DeliverySimulator/Core/MainGameInstance.h"
 #include "../../Components/OrderPassObject.h"
+#include "../../../Widgets/Buttons/ButtonWidget.h"
 #include "OrdersScreen.generated.h"
 
 /**
@@ -29,7 +31,10 @@ public:
 	UListView* OrdersList;
 
 	UPROPERTY(meta=(BindWidget))
-	UBorder *OrdersListWrapper;
+	UCanvasPanel *OrdersListWrapper;
+
+	UPROPERTY(meta=(BindWidget))
+	UButtonWidget *DetailsButton;
 
 	UPROPERTY()
 	UMainGameInstance* MainGameInstance;
@@ -39,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> OrdersScreenClass;
+
+
+
 
 	UPROPERTY(meta=(BindWidget))
 	UGridPanel *CurrentOrderWrapper;

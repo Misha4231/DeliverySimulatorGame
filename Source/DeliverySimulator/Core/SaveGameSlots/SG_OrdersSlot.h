@@ -22,6 +22,9 @@ struct FRestaurant : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<int> AvailableFoodIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D *Logo;
 };
 
 
@@ -53,6 +56,9 @@ struct FProduct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Price;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D *Image;
 };
 
 USTRUCT(BlueprintType)

@@ -19,6 +19,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Data")
 	TArray<int> AvailableFoodIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Data")
+	UTexture2D* Logo;
 	
 protected:
 	virtual void OnCollisionEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;

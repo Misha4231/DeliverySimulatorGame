@@ -13,13 +13,26 @@ void UOrdersListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 	if (OrderData)
 	{
-		PercentFee->SetText(FText::FromString(
-			FString::FormatAsNumber(OrderData->Order.PercentFee) + "%"
-		));
+		Logo->SetBrushFromTexture(OrderData->Order.Restaurant.Logo);
 
 		Earnings->SetText(FText::FromString(
 			OrderData->Order.CalculateEarningsString() + "$"
 		));
+
+		RestaurantName->SetText(FText::FromString(
+			OrderData->Order.Restaurant.Name));
+		DestinationName->SetText(FText::FromString(
+			OrderData->Order.Destination.Name));
+
+		ProductsVisualizationWrapper->ClearChildren();
+		for (int ProductIdx = 0; ProductIdx < OrderData->Order.ProductList.Num(); ProductIdx++) {
+			UImage *ProductImage = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass());
+			
+			ProductImage->SetBrushFromTexture(OrderData->Order.ProductList[ProductIdx].Product.Image);
+			ProductImage->SetRenderTranslation(FVector2D(ProductIdx * 10 * (-1), 0));
+			
+			ProductsVisualizationWrapper->AddChildToHorizontalBox(ProductImage);
+		}
 	}
 }
 

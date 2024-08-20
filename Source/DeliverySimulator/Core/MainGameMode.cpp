@@ -2,7 +2,6 @@
 
 
 #include "MainGameMode.h"
-
 #include "MainGameInstance.h"
 
 
@@ -22,14 +21,15 @@ void AMainGameMode::BeginPlay()
 		for (AActor* FoundRestaurantCheckpointActor : FoundRestaurantCheckpoints)
 		{
 			if (const ARestaurantCheckpoint* RestaurantCheckpoint = Cast<ARestaurantCheckpoint>(FoundRestaurantCheckpointActor))
-			{
+		{
 				FRestaurant NewRestaurant = FRestaurant();
 			
 				NewRestaurant.Id = RestaurantCheckpoint->Id;
 				NewRestaurant.Location = RestaurantCheckpoint->GetActorLocation();
 				NewRestaurant.Name = RestaurantCheckpoint->Name;
 				NewRestaurant.AvailableFoodIds = RestaurantCheckpoint->AvailableFoodIds;
-			
+				NewRestaurant.Logo = RestaurantCheckpoint->Logo;
+
 				GameInstance->OrdersSubsystem->Restaurants.Add(NewRestaurant);
 			}
 		}

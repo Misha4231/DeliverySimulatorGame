@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
+#include "Components/HorizontalBox.h"
 #include "OrderPassObject.h"
 #include "../Screens/Base/PhoneScreen.h"
 #include "OrdersListEntry.generated.h"
@@ -32,13 +33,19 @@ public:
 	UButton* GoToDetailsButton;
 
 	UPROPERTY(meta=(BindWidget))
-	UTextBlock* Distance;
-
-	UPROPERTY(meta=(BindWidget))
-	UTextBlock* PercentFee;
-
-	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Earnings;
+
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* RestaurantName;
+
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* DestinationName;
+
+	UPROPERTY(meta=(BindWidget))
+	UHorizontalBox *ProductsVisualizationWrapper;
+
+	UPROPERTY(meta=(BindWidget))
+	UImage *Logo;
 
 	UFUNCTION()
 	void GoToDetails();
