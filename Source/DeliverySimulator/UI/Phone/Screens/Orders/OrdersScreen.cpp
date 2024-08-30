@@ -3,6 +3,7 @@
 
 #include "OrdersScreen.h"
 #include "DeliverySimulator/UI/Phone/Components/OrderPassObject.h"
+#include "../../Components/OrderPassObject.h"
 #include "OrderDetailsScreen.h"
 
 void UOrdersScreen::ScreenConstruct()
@@ -32,6 +33,38 @@ void UOrdersScreen::ScreenConstruct()
 		}
 		MainGameInstance->OrdersSubsystem->NewOrderDispatcher.AddUniqueDynamic(this, &UOrdersScreen::OnAddOrderToList);
 	}
+
+	DetailsButtonWrapper->SetVisibility(ESlateVisibility::Collapsed);
+
+	DetailsButton->OnClickedDelegate.BindUObject(this, &UOrdersScreen::OnDetailsButtonClicked);
+	OnListItemSlectedDelegate.AddUObject(this, &UOrdersScreen::OnListItemSelected);
+}
+
+void UOrdersScreen::OnDetailsButtonClicked()
+{
+	if (!SelectedOrderData) return;
+
+	if (UOrderDetailsScreen* DetailsScreen = Cast<UOrderDetailsScreen>(CreateWidget<UPhoneScreen>(this, OrderDetailsScreenClass))) {
+		DetailsScreen->SetOrderData(SelectedOrderData);
+		
+		if (ChangeToCreatedScreenDelegate->IsBound()) {
+			ChangeToCreatedScreenDelegate->Execute(DetailsScreen);
+		}
+	}
+
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, TEXT("Clicked"));
+}
+
+void UOrdersScreen::OnListItemSelected(UOrderPassObject* OrderData)
+{
+	SelectedOrderData = OrderData;
+	DetailsButtonWrapper->SetRenderOpacity(0.1);
+	DetailsButtonWrapper->SetVisibility(ESlateVisibility::Visible);
+
+	if (DetailsButtonShowupAnimation)
+		PlayAnimation(DetailsButtonShowupAnimation);
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, "Selected");
 }
 
 void UOrdersScreen::OnAddOrderToList(FOrder NewOrder)
@@ -40,6 +73,7 @@ void UOrdersScreen::OnAddOrderToList(FOrder NewOrder)
 	PassObject->Order = NewOrder;
 	PassObject->ScreenChangeDelegate = ScreenChangeDelegate;
 	PassObject->ChangeToCreatedScreenDelegate = ChangeToCreatedScreenDelegate;
+	PassObject->ListItemSelectedDelegate = &OnListItemSlectedDelegate;
 
 	OrdersList->AddItem(PassObject);
 }

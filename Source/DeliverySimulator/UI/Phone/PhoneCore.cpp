@@ -46,7 +46,8 @@ void UPhoneCore::ChangeScreen(TSubclassOf<UPhoneScreen> NewScreenClass)
 		return;
 	
 	for (UPhoneScreen* Screen : ScreensStack) {
-		if (NewScreenClass.Get()->GetName() == Screen->GetClass()->GetName()) {
+		if (Screen && Screen->GetClass() && NewScreenClass.Get() && NewScreenClass.Get()->GetName() == Screen->GetClass()->GetName()) {
+			
 			while (ScreensStack.Num() > 1 && NewScreenClass.Get()->GetName() != ScreensStack.Last()->GetClass()->GetName()) {
 				ScreensStack.Pop();
 			}

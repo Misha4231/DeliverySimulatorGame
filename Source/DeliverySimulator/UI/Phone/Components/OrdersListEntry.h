@@ -12,6 +12,7 @@
 #include "Components/HorizontalBox.h"
 #include "OrderPassObject.h"
 #include "../Screens/Base/PhoneScreen.h"
+#include "../../Widgets/Lights/GlowingPipe.h"
 #include "OrdersListEntry.generated.h"
 
 /**
@@ -30,7 +31,7 @@ public:
 	UOrderPassObject* OrderData;
 	
 	UPROPERTY(meta=(BindWidget))
-	UButton* GoToDetailsButton;
+	UButton* ClickableWrapper;
 
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Earnings;
@@ -47,8 +48,42 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UImage *Logo;
 
+	UPROPERTY(meta=(BindWidget))
+	UGlowingPipe* TopEmissivePipe;
+
+	UPROPERTY(meta=(BindWidget))
+	UGlowingPipe* BottomEmissivePipe;
+
 	UFUNCTION()
-	void GoToDetails();
+	void OnEntryClicked();
+
+protected:
+	UFUNCTION()
+	void OnListItemSelected(UOrderPassObject* SelectedOrderData);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundBase *HoverSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundBase *SelectionSound;
+
+private:
+	bool isSelected;
+
+public:
+	UFUNCTION()
+	void OnEntryHovered();
+
+	UFUNCTION()
+	void OnEntryUnhovered();
+
+	UPROPERTY(Transient, meta=(BindWidgetAnim))
+	class UWidgetAnimation *HoverLinesAnimation;
+
+	FWidgetAnimationDynamicEvent OnHoverAnimationEndDelegate;
+
+	UFUNCTION()
+	void OnHoverAnimationEnd();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UPhoneScreen> OrderDetailsScreenClass;

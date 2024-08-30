@@ -3,6 +3,7 @@
 
 #include "OrdersListEntry.h"
 #include "ProductPassObject.h"
+#include "Kismet/GameplayStatics.h"
 #include "../Screens/Orders/OrderDetailsScreen.h"
 
 void UOrdersListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
@@ -33,23 +34,87 @@ void UOrdersListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 			
 			ProductsVisualizationWrapper->AddChildToHorizontalBox(ProductImage);
 		}
+
+		OrderData->ListItemSelectedDelegate->AddUObject(this, &UOrdersListEntry::OnListItemSelected);
 	}
+	
 }
 
 void UOrdersListEntry::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	GoToDetailsButton->OnClicked.AddDynamic(this, &UOrdersListEntry::GoToDetails);
+	TopEmissivePipe->SetVisibility(ESlateVisibility::Hidden);
+	BottomEmissivePipe->SetVisibility(ESlateVisibility::Hidden);
+
+	ClickableWrapper->OnClicked.AddDynamic(this, &UOrdersListEntry::OnEntryClicked);
+	ClickableWrapper->OnHovered.AddDynamic(this, &UOrdersListEntry::OnEntryHovered);
+	ClickableWrapper->OnUnhovered.AddDynamic(this, &UOrdersListEntry::OnEntryUnhovered);
+
+	OnHoverAnimationEndDelegate.BindUFunction(this, "OnHoverAnimationEnd");
+	BindToAnimationFinished(HoverLinesAnimation, OnHoverAnimationEndDelegate);
 }
 
-void UOrdersListEntry::GoToDetails()
+void UOrdersListEntry::OnEntryClicked()
 {
-	if (UOrderDetailsScreen *OrderDetailsScreenWidget = Cast<UOrderDetailsScreen>(CreateWidget<UUserWidget>(this, OrderDetailsScreenClass))) {
-		OrderDetailsScreenWidget->SetOrderData(OrderData);
+	if (SelectionSound)
+		UGameplayStatics::PlaySound2D(GetWorld(), SelectionSound);
 
-		if (OrderData->ChangeToCreatedScreenDelegate->IsBound()) {
-			OrderData->ChangeToCreatedScreenDelegate->Execute(OrderDetailsScreenWidget);
+
+	if (isSelected) {
+		if (UOrderDetailsScreen *OrderDetailsScreenWidget = Cast<UOrderDetailsScreen>(CreateWidget<UUserWidget>(this, OrderDetailsScreenClass))) {
+			OrderDetailsScreenWidget->SetOrderData(OrderData);
+
+			if (OrderData->ChangeToCreatedScreenDelegate->IsBound()) {
+				OrderData->ChangeToCreatedScreenDelegate->Execute(OrderDetailsScreenWidget);
+			}
 		}
+		return;
+	}
+
+	isSelected = true;
+	
+	if (OrderData->ListItemSelectedDelegate->IsBound()) {
+		OrderData->ListItemSelectedDelegate->Broadcast(OrderData);
+	}
+}
+
+void UOrdersListEntry::OnListItemSelected(UOrderPassObject *SelectedOrderData)
+{
+	if (SelectedOrderData->Order.Id != OrderData->Order.Id && isSelected) {
+		isSelected = false;
+		PlayAnimationReverse(HoverLinesAnimation);
+	}
+}
+
+void UOrdersListEntry::OnEntryHovered() {
+	if (!isSelected) {
+		if (HoverSound)
+			UGameplayStatics::PlaySound2D(GetWorld(), HoverSound);
+
+		TopEmissivePipe->SetVisibility(ESlateVisibility::Visible);
+		BottomEmissivePipe->SetVisibility(ESlateVisibility::Visible);
+
+		if (HoverLinesAnimation) {
+			PlayAnimation(HoverLinesAnimation);
+			
+		}
+	}
+}
+void UOrdersListEntry::OnEntryUnhovered() {
+	if (HoverLinesAnimation && !isSelected) {
+		PlayAnimationReverse(HoverLinesAnimation);
+	}
+
+}
+
+void UOrdersListEntry::OnHoverAnimationEnd()
+{
+	if (ClickableWrapper->IsHovered()) {
+		TopEmissivePipe->SetVisibility(ESlateVisibility::Visible);
+		BottomEmissivePipe->SetVisibility(ESlateVisibility::Visible);
+	} else {
+		TopEmissivePipe->SetVisibility(ESlateVisibility::Hidden);
+		BottomEmissivePipe->SetVisibility(ESlateVisibility::Hidden);	
 	}
 }

@@ -12,9 +12,13 @@
 #include "Components/GridPanel.h"
 #include "Components/CanvasPanel.h"
 #include "DeliverySimulator/Core/MainGameInstance.h"
-#include "../../Components/OrderPassObject.h"
 #include "../../../Widgets/Buttons/ButtonWidget.h"
+#include "Delegates/Delegate.h"
 #include "OrdersScreen.generated.h"
+
+class UOrderPassObject;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(EOnListItemSelected, UOrderPassObject*);
 
 /**
  * 
@@ -34,18 +38,31 @@ public:
 	UCanvasPanel *OrdersListWrapper;
 
 	UPROPERTY(meta=(BindWidget))
-	UButtonWidget *DetailsButton;
+	UButtonWidget* DetailsButton;
 
-	UPROPERTY()
+	UPROPERTY(meta=(BindWidget))
+	UBorder *DetailsButtonWrapper;
+
+	void OnDetailsButtonClicked();
+	EOnListItemSelected OnListItemSlectedDelegate;
+	UFUNCTION()
+	void OnListItemSelected(UOrderPassObject* OrderData);
+private:
+	UOrderPassObject *SelectedOrderData;
+
+protected:
+	UPROPERTY(Transient, meta=(BindWidgetAnim))
+	UWidgetAnimation* DetailsButtonShowupAnimation;
+
+protected:
 	UMainGameInstance* MainGameInstance;
 
+public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	TSubclassOf<UUserWidget> OrderDetailsScreenClass;
+	TSubclassOf<UPhoneScreen> OrderDetailsScreenClass;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	TSubclassOf<UUserWidget> OrdersScreenClass;
-
-
+	TSubclassOf<UPhoneScreen> OrdersScreenClass;
 
 
 	UPROPERTY(meta=(BindWidget))

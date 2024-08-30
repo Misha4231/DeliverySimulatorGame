@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "DeliverySimulator/Core/SaveGameSlots/SG_OrdersSlot.h"
 #include "../Screens/Base/PhoneScreen.h"
+#include "../Screens/Orders/OrdersScreen.h"
 #include "OrderPassObject.generated.h"
 
 /**
@@ -23,10 +24,16 @@ public:
 		: ScreenChangeDelegate(InScreenChangeDelegate), ChangeToCreatedScreenDelegate(InChangeToCreatedScreenDelegate)
 	{
 	}
+	UOrderPassObject(FScreenChangeDelegate* InScreenChangeDelegate, FChangeToCreatedScreenDelegate* InChangeToCreatedScreenDelegate, EOnListItemSelected* InListItemSelectedDelegate)
+		: ScreenChangeDelegate(InScreenChangeDelegate), ChangeToCreatedScreenDelegate(InChangeToCreatedScreenDelegate), ListItemSelectedDelegate(InListItemSelectedDelegate)
+	{
+	}
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FOrder Order;
 
 	FScreenChangeDelegate* ScreenChangeDelegate;
 	FChangeToCreatedScreenDelegate* ChangeToCreatedScreenDelegate;
+	EOnListItemSelected* ListItemSelectedDelegate;
 };

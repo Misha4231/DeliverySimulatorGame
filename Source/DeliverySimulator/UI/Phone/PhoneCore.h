@@ -52,7 +52,7 @@ public:
 	UWidgetAnimation* FadeIn;
 
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
-	UWidgetAnimation* FadeOut;
+	UWidgetAnimation *FadeOut;
 
 	UPROPERTY()
 	UCoreHUD* HUD;
