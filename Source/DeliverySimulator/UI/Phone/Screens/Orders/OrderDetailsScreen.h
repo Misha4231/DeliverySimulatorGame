@@ -7,9 +7,11 @@
 #include "../Base/PhoneScreen.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "Components/Button.h"
 #include "DeliverySimulator/UI/Phone/Components/OrderPassObject.h"
 #include "DeliverySimulator/UI/Phone/Components/ProductPassObject.h"
+#include "../../../Widgets/Buttons/ButtonWidget.h"
 #include "OrderDetailsScreen.generated.h"
 
 /**
@@ -28,6 +30,9 @@ private:
 
 public:
 	UPROPERTY(meta=(BindWidget))
+	UImage *Logo;
+
+	UPROPERTY(meta=(BindWidget))
 	UTextBlock *Restaurant;
 
 	UPROPERTY(meta=(BindWidget))
@@ -37,7 +42,7 @@ public:
 	UListView* ProductsListView;
 
 	UPROPERTY(meta=(BindWidget))
-	UButton* TakeOrderButton;
+	UButtonWidget* TakeOrderButton;
 
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Distance;

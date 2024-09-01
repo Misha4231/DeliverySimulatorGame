@@ -8,6 +8,7 @@ void UOrderDetailsScreen::ScreenConstruct()
 {
     Restaurant->SetText(FText::FromString(OrderData->Order.Restaurant.Name));
     Destination->SetText(FText::FromString(OrderData->Order.Destination.Name));
+    Logo->SetBrushFromTexture(OrderData->Order.Restaurant.Logo);
 
     PercentFee->SetText(FText::FromString(
 		FString::FormatAsNumber(OrderData->Order.PercentFee) + "%"
@@ -25,7 +26,7 @@ void UOrderDetailsScreen::ScreenConstruct()
 		OrderData->Order.CalculateEarningsString() + "$"
 	));
 
-    TakeOrderButton->OnClicked.AddUniqueDynamic(this, &UOrderDetailsScreen::TakeOrderButtonClicked);
+    TakeOrderButton->OnClickedDelegate.BindUObject(this, &UOrderDetailsScreen::TakeOrderButtonClicked);
 }
 
 
